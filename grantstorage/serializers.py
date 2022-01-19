@@ -1,21 +1,20 @@
-from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from grantstorage.models import Grant
-
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ['url', 'username', 'email', 'groups']
-
-
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Group
-        fields = ['url', 'name']
+from grantstorage.models import Grant, User, Group
 
 
 class GrantSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Grant
+        exclude = []
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        exclude = []
+
+
+class GroupSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Group
         exclude = []
