@@ -4,8 +4,8 @@ from grantstorage.views import UserViewSet, GrantViewSet, GroupViewSet
 
 router = routers.DefaultRouter()
 router.register(r'grant', GrantViewSet)
-router.register(r'users', UserViewSet)
-router.register(r'groups', GroupViewSet)
+router.register(r'user', UserViewSet)
+router.register(r'group', GroupViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
