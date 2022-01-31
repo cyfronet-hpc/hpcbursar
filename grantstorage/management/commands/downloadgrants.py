@@ -5,6 +5,7 @@ import json
 from grantstorage.localmodels.user import User, UserSerializer
 from grantstorage.localmodels.group import Group, GroupSerializer
 from grantstorage.localmodels.grant import Grant, Allocation, GrantSerializer
+import datetime
 
 
 class Command(BaseCommand):
@@ -54,11 +55,12 @@ class Command(BaseCommand):
             name = portal_grant['name']
             group = portal_grant['team']
             status = portal_grant['state']
-            start = portal_grant['start']
-            end = portal_grant['end']
+            start = datetime.datetime.fromtimestamp(int(portal_grant['start'])/1000).date()
+            end = datetime.datetime.fromtimestamp(int(portal_grant['end']/1000)).date()
             allocations = self.convert_allocation_to_localmode(portal_grant['olaList'])
             grant = Grant(name=name, group=group, status=status, start=start, end=end, allocations=allocations)
             grants += [grant]
+            print(grant)
         return grants
 
     def convert_users_to_localmodels(self, portal_users):
