@@ -35,6 +35,6 @@ class GrantSerializer(serializers.Serializer):
     name = serializers.CharField()
     group = serializers.CharField()
     status = serializers.CharField()
-    start = serializers.DateField
+    start = serializers.DateField()
     end = serializers.DateField()
     allocations = AllocationSerializer(many=True)
