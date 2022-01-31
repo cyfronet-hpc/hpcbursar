@@ -13,3 +13,11 @@ class User(object):
 class UserSerializer(serializers.Serializer):
     login = serializers.CharField()
     status = serializers.CharField()
+
+    def create(self, validated_data):
+        return User(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.login = validated_data.get('login', instance.login)
+        instance.status = validated_data.get('status', instance.status)
+        return instance
