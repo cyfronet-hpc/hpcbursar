@@ -39,7 +39,15 @@ class MongoStorage(object):
         name = getattr(instance, name_field)
         db[MODEL_TYPE_TO_COLLECTION[model_type]].find_one_and_replace({name_field: name}, data, upsert=True)
 
-    def find_template(self, model_type, name):
+    def find_by_filter_template(self, model_type, query):
+        db = self.get_db()
+
+        documents = list(db[MODEL_TYPE_TO_COLLECTION[model_type]].find(query))
+        serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=documents, many=True)
+        serializer.is_valid()
+        return serializer.save()
+
+    def find_one_by_name_template(self, model_type, name):
         db = self.get_db()
 
         name_field = MODEL_TYPE_TO_NAMEFIELD[model_type]
@@ -52,8 +60,8 @@ class MongoStorage(object):
         db = self.get_db()
 
         name_field = MODEL_TYPE_TO_NAMEFIELD[model_type]
-        document = list(db[MODEL_TYPE_TO_COLLECTION[model_type]].find({}))
-        serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=document, many=True)
+        documents = list(db[MODEL_TYPE_TO_COLLECTION[model_type]].find({}))
+        serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=documents, many=True)
         serializer.is_valid()
         return serializer.save()
 
@@ -82,14 +90,14 @@ class MongoStorage(object):
             self.store_grant(grant)
 
     # finds single
-    def find_user(self, login):
-        return self.find_template(User, login)
+    def find_user_by_login(self, login):
+        return self.find_one_by_name_template(User, login)
 
-    def find_group(self, name):
-        return self.find_template(Group, name)
+    def find_group_by_name(self, name):
+        return self.find_one_by_name_template(Group, name)
 
-    def find_grant(self, name):
-        return self.find_template(Grant, name)
+    def find_grant_by_name(self, name):
+        return self.find_one_by_name_template(Grant, name)
 
     # finds all
     def find_all_users(self):
@@ -100,3 +108,10 @@ class MongoStorage(object):
 
     def find_all_grants(self):
         return self.find_all_template(Grant)
+
+    # specific finds
+    def find_group_by_member(self, member):
+        return self.find_by_filter_template(Group, {'members': member})
+
+    def find_grant_by_group(self, group):
+        return self.find_by_filter_template(Grant, {'group': group})
