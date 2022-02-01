@@ -39,7 +39,7 @@ class MongoStorage(object):
         name = getattr(instance, name_field)
         db[MODEL_TYPE_TO_COLLECTION[model_type]].find_one_and_replace({name_field: name}, data, upsert=True)
 
-    def read_template(self, model_type, name):
+    def find_template(self, model_type, name):
         db = self.get_db()
 
         name_field = MODEL_TYPE_TO_NAMEFIELD[model_type]
@@ -48,13 +48,12 @@ class MongoStorage(object):
         serializer.is_valid()
         return serializer.save()
 
-    def read_all_template(self, model_type):
+    def find_all_template(self, model_type):
         db = self.get_db()
 
         name_field = MODEL_TYPE_TO_NAMEFIELD[model_type]
-        document = db[MODEL_TYPE_TO_COLLECTION[model_type]].find({})
-
-        serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=document)
+        document = list(db[MODEL_TYPE_TO_COLLECTION[model_type]].find({}))
+        serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=document, many=True)
         serializer.is_valid()
         return serializer.save()
 
@@ -69,6 +68,7 @@ class MongoStorage(object):
         self.store_template(Grant, grant)
 
     # stores many
+    # TODO: implement as bulk operation
     def store_users(self, users):
         for user in users:
             self.store_user(user)
@@ -81,22 +81,22 @@ class MongoStorage(object):
         for grant in grants:
             self.store_grant(grant)
 
-    # reads single
-    def read_user(self, login):
-        return self.read_template(User, login)
+    # finds single
+    def find_user(self, login):
+        return self.find_template(User, login)
 
-    def read_group(self, name):
-        return self.read_template(Group, name)
+    def find_group(self, name):
+        return self.find_template(Group, name)
 
-    def read_grant(self, name):
-        return self.read_template(Grant, name)
+    def find_grant(self, name):
+        return self.find_template(Grant, name)
 
-    # reads all
-    def read_all_users(self):
-        return self.read_all_template(User)
+    # finds all
+    def find_all_users(self):
+        return self.find_all_template(User)
 
-    def read_all_groups(self):
-        return self.read_all_template(Group)
+    def find_all_groups(self):
+        return self.find_all_template(Group)
 
-    def read_all_grants(self):
-        return self.read_all_template(Grant)
+    def find_all_grants(self):
+        return self.find_all_template(Grant)
