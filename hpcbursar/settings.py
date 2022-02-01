@@ -123,3 +123,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+GRID_CERTIFICATE_LOCATION = '/home/yaq/.globus/usercert.pem'
+GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
+
+PLGRID_PORTAL_URL = 'https://portal.pre.plgrid.pl/'
+PLGRID_SITE_NAME = 'CYFRONET-ARES'
