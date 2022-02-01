@@ -21,6 +21,7 @@ MODEL_TYPE_TO_NAMEFIELD = {
     Grant: 'name'
 }
 
+
 class MongoStorage(object):
     def __init__(self):
         pass
@@ -34,7 +35,9 @@ class MongoStorage(object):
 
         serializer = MODEL_TYPE_TO_SERIALIZER[model_type]
         data = serializer(instance).data
-        db[MODEL_TYPE_TO_COLLECTION[model_type]].insert_one(data)
+        name_field = MODEL_TYPE_TO_NAMEFIELD[model_type]
+        name = getattr(instance, name_field)
+        db[MODEL_TYPE_TO_COLLECTION[model_type]].find_one_and_replace({name_field: name}, data, upsert=True)
 
     def read_template(self, model_type, name):
         db = self.get_db()
