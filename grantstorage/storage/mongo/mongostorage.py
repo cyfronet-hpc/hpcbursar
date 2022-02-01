@@ -48,6 +48,16 @@ class MongoStorage(object):
         serializer.is_valid()
         return serializer.save()
 
+    def read_all_template(self, model_type):
+        db = self.get_db()
+
+        name_field = MODEL_TYPE_TO_NAMEFIELD[model_type]
+        document = db[MODEL_TYPE_TO_COLLECTION[model_type]].find({})
+
+        serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=document)
+        serializer.is_valid()
+        return serializer.save()
+
     # stores
     def store_user(self, user):
         self.store_template(User, user)
@@ -58,7 +68,20 @@ class MongoStorage(object):
     def store_grant(self, grant):
         self.store_template(Grant, grant)
 
-    # reads
+    # stores many
+    def store_users(self, users):
+        for user in users:
+            self.store_user(user)
+
+    def store_groups(self, groups):
+        for group in groups:
+            self.store_group(group)
+
+    def store_grants(self, grants):
+        for grant in grants:
+            self.store_grant(grant)
+
+    # reads single
     def read_user(self, login):
         return self.read_template(User, login)
 
@@ -67,3 +90,13 @@ class MongoStorage(object):
 
     def read_grant(self, name):
         return self.read_template(Grant, name)
+
+    # reads all
+    def read_all_users(self):
+        return self.read_all_template(User)
+
+    def read_all_groups(self):
+        return self.read_all_template(Group)
+
+    def read_all_grants(self):
+        return self.read_all_template(Grant)
