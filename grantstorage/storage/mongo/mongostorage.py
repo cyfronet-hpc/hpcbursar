@@ -43,6 +43,8 @@ class MongoStorage(object):
         db = self.get_db()
 
         documents = list(db[MODEL_TYPE_TO_COLLECTION[model_type]].find(query))
+        if not documents:
+            return documents
         serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=documents, many=True)
         serializer.is_valid()
         return serializer.save()
@@ -51,16 +53,24 @@ class MongoStorage(object):
         db = self.get_db()
 
         name_field = MODEL_TYPE_TO_NAMEFIELD[model_type]
+        # results = self.find_by_filter_template(model_type, {name_field: name})
+        # if not results:
+        #     return None
         document = db[MODEL_TYPE_TO_COLLECTION[model_type]].find_one({name_field: name})
+        if not document:
+            return document
         serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=document)
         serializer.is_valid()
         return serializer.save()
+        # return results[0]
 
     def find_all_template(self, model_type):
         db = self.get_db()
 
         name_field = MODEL_TYPE_TO_NAMEFIELD[model_type]
         documents = list(db[MODEL_TYPE_TO_COLLECTION[model_type]].find({}))
+        if not documents:
+            return documents
         serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=documents, many=True)
         serializer.is_valid()
         return serializer.save()
