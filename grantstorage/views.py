@@ -1,9 +1,8 @@
 import pymunge
-from rest_framework import viewsets
 from rest_framework.permissions import BasePermission
-
-from grantstorage.serializers import UserSerializer, GroupSerializer, GrantSerializer
-from grantstorage.models import Grant, User, Group
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from grantstorage.apicontroler.v1.apicontroler import UserServicesController
 
 
 class MungePermission(BasePermission):
@@ -27,39 +26,17 @@ class MungePermission(BasePermission):
         return True
 
 
-class GrantViewSet(viewsets.ModelViewSet):
+class UserServicesView(APIView):
     """
-        View to list all users in the system.
-
         * Requires token authentication.
         * Only admin users are able to access this view.
     """
-    permission_classes = [MungePermission]
 
-    queryset = Grant.objects.all()
-    serializer_class = GrantSerializer
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-        View to list all users in the system.
-        * Requires token authentication.
-        * Only admin users are able to access this view.
-    """
-    permission_classes = [MungePermission]
-
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    View to list all users in the system.
-
-    * Requires token authentication.
-    * Only admin users are able to access this view.
-    """
-    permission_classes = [MungePermission]
-
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+    # TODO add authentication
+    def get(self, request, login):
+        user_service_controller = UserServicesController()
+        grants_dict = user_service_controller.user_grant_info(login)
+        response = []
+        # for grant, group in grants_dict.items():
+        #     response.append(UserGrantInfoResponse(grant, group))
+        return Response(response)
