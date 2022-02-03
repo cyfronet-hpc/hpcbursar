@@ -38,7 +38,7 @@ class Command(BaseCommand):
                 parameters[resource_mapping[resource_type][r]] = v
         return parameters
 
-    def convert_allocation_to_localmode(self, portal_allocations):
+    def convert_allocation_to_localmodel(self, portal_allocations):
 
         allocations = []
         for portal_allocation in portal_allocations:
@@ -58,7 +58,7 @@ class Command(BaseCommand):
             status = portal_grant['state']
             start = datetime.datetime.fromtimestamp(int(portal_grant['start']) / 1000).date()
             end = datetime.datetime.fromtimestamp(int(portal_grant['end'] / 1000)).date()
-            allocations = self.convert_allocation_to_localmode(portal_grant['olaList'])
+            allocations = self.convert_allocation_to_localmodel(portal_grant['olaList'])
             grant = Grant(name=name, group=group, status=status, start=start, end=end, allocations=allocations)
             grants += [grant]
         return grants

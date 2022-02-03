@@ -120,8 +120,8 @@ class MongoStorage(object):
         return self.find_all_template(Grant)
 
     # specific finds
-    def find_group_by_member(self, member):
+    def find_groups_by_member(self, member):
         return self.find_by_filter_template(Group, {'members': member})
 
-    def find_grant_by_group(self, group):
+    def find_grants_by_group(self, group):
         return self.find_by_filter_template(Grant, {'group': group})
