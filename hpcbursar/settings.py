@@ -129,3 +129,10 @@ GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
 
 PLGRID_PORTAL_URL = 'https://portal.pre.plgrid.pl/'
 PLGRID_SITE_NAME = 'CYFRONET-ARES'
+
+PLG_LOGIN_PREFIX = 'plg'
+PLG_ACCOUNT_PREFIX = 'plg'
+
+SLURM_CLUSTER_NAME = 'ares'
+SLURM_CLIENT_VERBOSE = True
+SLURM_SACCTMGR_LOCATION = '/net/slurm/releases/production.x86_64/bin/sacctmgr'
