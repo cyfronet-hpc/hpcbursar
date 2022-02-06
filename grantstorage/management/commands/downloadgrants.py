@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from grantstorage.integrations.portalclient import PortalClient
+from grantstorage.integration.portalclient import PortalClient
 from django.conf import settings
 import json
 from grantstorage.localmodels.user import User, UserSerializer
