@@ -9,7 +9,7 @@ class SacctmgrException(Exception):
 class SacctmgrClient(object):
     def __init__(self):
         self.verbose = settings.SLURM_CLIENT_VERBOSE
-        self.dryrun = False
+        self.dryrun = True
         self.sacctmgr_path = settings.SLURM_SACCTMGR_LOCATION
 
     def execute(self, cmd):
@@ -40,8 +40,16 @@ class SacctmgrClient(object):
         cmd = ['update', 'user', 'name=' + login, 'account=' + account, 'set maxsubmit=' + str(maxsubmit)]
         self.execute(cmd)
 
+    def update_user_maxsubmit(self, login, maxsubmit):
+        cmd = ['update', 'user', 'name=' + login, 'set maxsubmit=' + str(maxsubmit)]
+        self.execute(cmd)
+
     def update_account_maxsubmit(self, account, maxsubmit):
         cmd = ['update', 'account', 'name=' + account, 'set maxsubmit=' + str(maxsubmit)]
+        self.execute(cmd)
+
+    def update_account_fairshare(self, account, fairshare):
+        cmd = ['update', 'account', 'name=' + account, 'set fairshare=' + str(fairshare)]
         self.execute(cmd)
 
     # remove
@@ -49,8 +57,12 @@ class SacctmgrClient(object):
         cmd = ['remove', 'account', 'name=' + account]
         self.execute(cmd)
 
-    def remove_user_account(self, user, account):
-        cmd = ['remove', 'account', 'name=' + account]
+    def remove_user(self, login):
+        cmd = ['remove', 'user', 'name=' + login]
+        self.execute(cmd)
+
+    def remove_user_account(self, login, account):
+        cmd = ['remove', 'user', 'name=' + login, 'account=' + account]
         self.execute(cmd)
 
     # gets
@@ -83,17 +95,17 @@ class SacctmgrClient(object):
         for line in stdout.split('\n')[1:]:
             if not line:
                 continue
-            account, user, share, maxsubmit = line.split('|')
+            account, user, fairshare, maxsubmit = line.split('|')
             if account not in assoc_dict.keys():
                 assoc_dict[account] = {'users': {}}
 
-            if user == '':
-                assoc_dict[account]['share'] = share
-                assoc_dict[account]['maxsubmit'] = maxsubmit
+            if not user:
+                assoc_dict[account]['fairshare'] = int(fairshare)
+                assoc_dict[account]['maxsubmit'] = int(maxsubmit) if maxsubmit else None
             else:
                 assoc_dict[account]['users'][user] = {
-                    'share': share,
-                    'maxsubmit': maxsubmit
+                    'share': int(fairshare),
+                    'maxsubmit': int(maxsubmit) if maxsubmit else None
                 }
 
         return assoc_dict
