@@ -3,6 +3,7 @@ from rest_framework.permissions import BasePermission
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from grantstorage.apicontroler.v1.apicontroler import UserServicesController
+from grantstorage.models import UserGrantInfoResponse
 
 
 class MungePermission(BasePermission):
@@ -37,6 +38,6 @@ class UserServicesView(APIView):
         user_service_controller = UserServicesController()
         grants_dict = user_service_controller.user_grant_info(login)
         response = []
-        # for grant, group in grants_dict.items():
-        #     response.append(UserGrantInfoResponse(grant, group))
+        for grant, group in grants_dict.items():
+            response.append(UserGrantInfoResponse(grant, group))
         return Response(response)

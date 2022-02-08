@@ -4,6 +4,8 @@ class UserGrantInfoResponse(object):
         self.grant = grant
         self.group = group
 
+
+
 # class Resources(models.Model):
 #     cpu_hours = models.IntegerField()
 #     max_walltime = models.IntegerField()

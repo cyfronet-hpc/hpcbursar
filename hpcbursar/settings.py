@@ -124,8 +124,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GRID_CERTIFICATE_LOCATION = '/home/yaq/.globus/usercert.pem'
-GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
+GRID_CERTIFICATE_LOCATION = '/home/szymon/Polish_Grid_CA/sb_certificate.pem'
+GRID_KEY_LOCATION = '/home/szymon/Polish_Grid_CA/sb_key_no_pass.key'
 
 PLGRID_PORTAL_URL = 'https://portal.pre.plgrid.pl/'
 PLGRID_SITE_NAME = 'CYFRONET-ARES'

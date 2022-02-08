@@ -42,7 +42,9 @@ class MongoStorage(object):
     def find_by_filter_template(self, model_type, query):
         db = self.get_db()
 
+
         documents = list(db[MODEL_TYPE_TO_COLLECTION[model_type]].find(query))
+        print(query)
         if not documents:
             return documents
         serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=documents, many=True)
