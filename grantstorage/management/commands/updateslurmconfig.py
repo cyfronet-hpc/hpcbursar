@@ -8,6 +8,7 @@ from grantstorage.localmodels.grant import Grant, Allocation, GrantSerializer
 from grantstorage.storage.mongo.mongostorage import MongoStorage
 import datetime
 
+SUPPORTED_RESOURCES = ["CPU", "GPU"]
 
 class Command(BaseCommand):
     help = 'Generate Slurm sacct configuration based on grant/group/user data.'
@@ -54,10 +55,9 @@ class Command(BaseCommand):
                 allocations_dict = {}
                 for allocation in default_grant.allocations:
                     allocations_dict[allocation.resource] = allocation
-                if "CPU" in allocations_dict.keys():
-                    default_account = allocations_dict["CPU"].name
-                elif "GPU" in allocations_dict.keys():
-                    default_account = allocations_dict["GPU"].name
+                for resource_type in SUPPORTED_RESOURCES:
+                    if resource_type in allocations_dict.keys():
+                        default_account = allocations_dict[resource_type].name
 
             user_grant_dict[user] = default_account
 
@@ -77,7 +77,6 @@ class Command(BaseCommand):
         pass
 
     def add_slurm_account(self, grant, allocation, group):
-        print("adding", allocation)
         fs = self.calculate_fairshare(grant.start, grant.end, allocation.parameters['hours'])
         self.sc.add_account(allocation.name, fs)
         for user in set(group.members + group.leaders):
@@ -125,7 +124,7 @@ class Command(BaseCommand):
 
         for grant in grants:
             for allocation in grant.allocations:
-                if allocation.resource in ["CPU", "GPU"]:
+                if allocation.resource in SUPPORTED_RESOURCES:
                     if allocation.name not in slurm_assoc.keys():
                         self.add_slurm_account(grant, allocation, group_dict[grant.group])
 
@@ -133,7 +132,7 @@ class Command(BaseCommand):
 
         for grant in grants:
             for allocation in grant.allocations:
-                if allocation.resource in ["CPU", "GPU"]:
+                if allocation.resource in SUPPORTED_RESOURCES:
                     if allocation.name in slurm_assoc.keys():
                         self.sync_slurm_account(grant, allocation, group_dict[grant.name], slurm_assoc[allocation.name])
 
