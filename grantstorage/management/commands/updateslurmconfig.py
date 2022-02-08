@@ -25,7 +25,7 @@ class Command(BaseCommand):
 
     def is_grant_active(self, grant):
         end = grant.end + datetime.timedelta(days=1)
-        if end > datetime.datetime.now().date() and grant.start < datetime.datetime.now() and 'binding' in grant.status:
+        if end > datetime.datetime.now().date() and grant.start < datetime.datetime.now().date() and 'binding' in grant.status:
             return True
         else:
             return False
@@ -40,7 +40,10 @@ class Command(BaseCommand):
                 continue
             group = group_dict[grant.group]
             for user in set(group.members + group.leaders):
-                user_grants_dict += [grant]
+                if user not in user_grants_dict.keys():
+                    user_grants_dict[user] = [grant]
+                else:
+                    user_grants_dict[user] += [grant]
 
         user_grant_dict = {}
         for user, grants in user_grants_dict.items():
@@ -74,6 +77,7 @@ class Command(BaseCommand):
         pass
 
     def add_slurm_account(self, grant, allocation, group):
+        print("adding", allocation)
         fs = self.calculate_fairshare(grant.start, grant.end, allocation.parameters['hours'])
         self.sc.add_account(allocation.name, fs)
         for user in set(group.members + group.leaders):
@@ -121,15 +125,17 @@ class Command(BaseCommand):
 
         for grant in grants:
             for allocation in grant.allocations:
-                if allocation.name not in slurm_assoc.keys():
-                    self.add_slurm_account(grant, allocation, group_dict[grant.name])
+                if allocation.resource in ["CPU", "GPU"]:
+                    if allocation.name not in slurm_assoc.keys():
+                        self.add_slurm_account(grant, allocation, group_dict[grant.group])
 
         self.verify_default_accounts(user_da_dict, slurm_user_da_dict)
 
         for grant in grants:
             for allocation in grant.allocations:
-                if allocation.name in slurm_assoc.keys():
-                    self.sync_slurm_account(grant, allocation, group_dict[grant.name], slurm_assoc[allocation.name])
+                if allocation.resource in ["CPU", "GPU"]:
+                    if allocation.name in slurm_assoc.keys():
+                        self.sync_slurm_account(grant, allocation, group_dict[grant.name], slurm_assoc[allocation.name])
 
         # set proper default account for ppl added with new accounts
         new_user_da_dict = {}

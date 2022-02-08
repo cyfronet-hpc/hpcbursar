@@ -24,7 +24,7 @@ class SacctmgrClient(object):
 
     # adds
     def add_account(self, name, fairshare=0):
-        cmd = ['add', 'account', name, 'fairshare=' + fairshare]
+        cmd = ['add', 'account', name, 'fairshare=' + str(fairshare)]
         self.execute(cmd)
 
     def add_user_account(self, login, account):

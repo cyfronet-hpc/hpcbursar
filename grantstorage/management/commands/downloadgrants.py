@@ -53,15 +53,18 @@ class Command(BaseCommand):
     def convert_grants_to_localmodel(self, portal_grants):
         grants = []
         for portal_grant in portal_grants:
-            name = portal_grant['name']
-            group = portal_grant['team']
-            status = portal_grant['state']
-            start = datetime.datetime.fromtimestamp(int(portal_grant['start']) / 1000).date()
-            end = datetime.datetime.fromtimestamp(int(portal_grant['end'] / 1000)).date()
-            # allocations = self.convert_allocation_to_localmodel(portal_grant['allocations'])
-            allocations = self.convert_allocation_to_localmodel(portal_grant['olaList'])
-            grant = Grant(name=name, group=group, status=status, start=start, end=end, allocations=allocations)
-            grants += [grant]
+            try:
+                name = portal_grant['name']
+                group = portal_grant['team']
+                status = portal_grant['state']
+                start = datetime.datetime.fromtimestamp(int(portal_grant['start']) / 1000).date()
+                end = datetime.datetime.fromtimestamp(int(portal_grant['end'] / 1000)).date()
+                # allocations = self.convert_allocation_to_localmodel(portal_grant['allocations'])
+                allocations = self.convert_allocation_to_localmodel(portal_grant['olaList'])
+                grant = Grant(name=name, group=group, status=status, start=start, end=end, allocations=allocations)
+                grants += [grant]
+            except:
+                pass
         return grants
 
     def convert_users_to_localmodels(self, portal_users):
