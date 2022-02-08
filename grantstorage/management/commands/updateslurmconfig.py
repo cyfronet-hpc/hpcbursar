@@ -93,7 +93,7 @@ class Command(BaseCommand):
         if slurm_account['fairshare'] != fs:
             self.sc.update_account_fairshare(allocation.name, fs)
         if slurm_account['maxsubmit'] == 0:
-            self.sc.update_user_maxsubmit(-1)
+            self.sc.update_account_maxsubmit(allocation.name, -1)
 
         for user in set(group.members + group.leaders):
             if user not in slurm_account['users'].keys():
@@ -106,17 +106,38 @@ class Command(BaseCommand):
             if slurm_user not in set(group.members + group.leaders):
                 self.sc.remove_user_account(slurm_user, allocation.name)
 
+    def filter_group_users(self, group, user_logins):
+        new_members = []
+        new_leaders = []
+        for user in group.members:
+            if user in user_logins:
+                new_members += [user]
+        for user in group.leaders:
+            if user in user_logins:
+                new_leaders += [user]
+
+        group.members = new_members
+        group.leaders = new_leaders
+
+        return group
+
     def handle(self, *args, **options):
         self.setup()
 
-        grants = self.ms.find_all_grants()
-        groups = self.ms.find_all_groups()
-        group_dict = {}
         users = self.ms.find_all_users()
+        groups = self.ms.find_all_groups()
+        grants = self.ms.find_all_grants()
+        users = list(filter(lambda user: user.status == 'ACTIVE', users))
+        user_dict = {}
+        group_dict = {}
+        for user in users:
+            user_dict[user.login] = user
         for grant in grants:
             grant.is_active = self.is_grant_active(grant)
         for group in groups:
+            self.filter_group_users(group, user_dict.keys())
             group_dict[group.name] = group
+
         user_da_dict = self.find_default_accounts(users, group_dict, grants)
 
         slurm_assoc = self.sc.get_assoc_dict()
@@ -134,7 +155,7 @@ class Command(BaseCommand):
             for allocation in grant.allocations:
                 if allocation.resource in SUPPORTED_RESOURCES:
                     if allocation.name in slurm_assoc.keys():
-                        self.sync_slurm_account(grant, allocation, group_dict[grant.name], slurm_assoc[allocation.name])
+                        self.sync_slurm_account(grant, allocation, group_dict[grant.group], slurm_assoc[allocation.name])
 
         # set proper default account for ppl added with new accounts
         new_user_da_dict = {}
