@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from grantstorage.models import User, AffiliationList
+from grantstorage.userinfoservice.user_grant_info import User, AffiliationList
 
 
 class Command(BaseCommand):

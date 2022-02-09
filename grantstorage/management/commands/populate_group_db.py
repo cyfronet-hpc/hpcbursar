@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from grantstorage.models import Group
+from grantstorage.userinfoservice.user_grant_info import Group
 
 
 class Command(BaseCommand):
