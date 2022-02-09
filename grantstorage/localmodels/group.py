@@ -8,6 +8,9 @@ class Group(object):
         self.members = members
         self.leaders = leaders
 
+    def get_all_members(self):
+        return list(set(self.members + self.leaders))
+
     def __str__(self):
         return f'Group: name: {self.name}, status: {self.status}, members: {self.members}, leaders: {self.leaders}'
 

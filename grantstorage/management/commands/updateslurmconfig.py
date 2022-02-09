@@ -42,7 +42,7 @@ class Command(BaseCommand):
             if not grant.is_active:
                 continue
             group = group_dict[grant.group]
-            for user in set(group.members + group.leaders):
+            for user in group.get_all_members():
                 if user not in user_grants_dict.keys():
                     user_grants_dict[user] = [grant]
                 else:
@@ -113,7 +113,7 @@ class Command(BaseCommand):
     def add_slurm_account(self, grant, allocation, group):
         fs = self.calculate_fairshare(grant.start, grant.end, allocation.parameters['hours'])
         self.sc.add_account(allocation.name, fs)
-        for user in set(group.members + group.leaders):
+        for user in group.get_all_members():
             self.sc.add_user_account(user, allocation.name)
 
     def sync_slurm_account(self, grant, allocation, group, slurm_account, managed_users):
@@ -129,7 +129,7 @@ class Command(BaseCommand):
         if slurm_account['maxsubmit'] == 0:
             self.sc.update_account_maxsubmit(allocation.name, -1)
 
-        for user in set(group.members + group.leaders):
+        for user in group.get_all_members():
             if user not in slurm_account['users'].keys():
                 self.sc.add_user_account(user, allocation.name)
             else:
@@ -137,7 +137,7 @@ class Command(BaseCommand):
                     self.sc.update_user_account_maxsubmit(user, allocation.name, -1)
 
         for slurm_user in slurm_account['users'].keys():
-            if slurm_user not in set(group.members + group.leaders) and slurm_user in managed_users:
+            if slurm_user not in group.get_all_members() and slurm_user in managed_users:
                 self.sc.remove_user_account(slurm_user, allocation.name)
 
     def handle(self, *args, **options):
