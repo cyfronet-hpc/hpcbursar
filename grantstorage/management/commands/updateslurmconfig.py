@@ -8,9 +8,6 @@ from grantstorage.localmodels.grant import Grant, Allocation, GrantSerializer
 from grantstorage.storage.mongo.mongostorage import MongoStorage
 import datetime
 
-SUPPORTED_RESOURCES = ["CPU", "GPU"]
-
-
 class Command(BaseCommand):
     help = 'Generate Slurm sacct configuration based on grant/group/user data.'
 
@@ -168,7 +165,7 @@ class Command(BaseCommand):
         print('adding grants')
         for grant in grants:
             for allocation in grant.allocations:
-                if allocation.resource in SUPPORTED_RESOURCES:
+                if allocation.resource in settings.SLURM_SUPPORTED_RESOURCES:
                     if allocation.name not in slurm_assoc.keys():
                         self.add_slurm_account(grant, allocation, group_dict[grant.group])
 
@@ -185,7 +182,7 @@ class Command(BaseCommand):
         print('sync_slurm_accounts')
         for grant in grants:
             for allocation in grant.allocations:
-                if allocation.resource in SUPPORTED_RESOURCES:
+                if allocation.resource in settings.SLURM_SUPPORTED_RESOURCES:
                     if allocation.name in slurm_assoc.keys():
                         self.sync_slurm_account(grant, allocation, group_dict[grant.group],
                                                 slurm_assoc[allocation.name], user_dict.keys())

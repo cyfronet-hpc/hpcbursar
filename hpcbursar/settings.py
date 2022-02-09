@@ -124,10 +124,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GRID_CERTIFICATE_LOCATION = '/home/yaq/.globus/usercert.pem'
-GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
+GRID_CERTIFICATE_LOCATION = '/root/.tempcert/usercert.pem'
+GRID_KEY_LOCATION = '/root/.tempcert/userkey-insec.pem'
 
-PLGRID_PORTAL_URL = 'https://portal.pre.plgrid.pl/'
+PLGRID_PORTAL_URL = 'https://portal.plgrid.pl/'
 PLGRID_SITE_NAME = 'CYFRONET-ARES'
 
 PLG_LOGIN_PREFIX = 'plg'
@@ -135,4 +135,10 @@ PLG_ACCOUNT_PREFIX = 'plg'
 
 SLURM_CLUSTER_NAME = 'ares'
 SLURM_CLIENT_VERBOSE = True
-SLURM_SACCTMGR_LOCATION = '/net/slurm/releases/production.x86_64/bin/sacctmgr'
+SLURM_SACCTMGR_LOCATION = '/opt/slurm/releases/production/bin/sacctmgr'
+
+SLURM_SUPPORTED_RESOURCES = ['CPU', 'GPU']
+SLURM_RESOURCE_PARTITION_MAPPING = {
+    'cpu': 'plgrid',
+    'gpu': 'plgrid-gpu'
+}
