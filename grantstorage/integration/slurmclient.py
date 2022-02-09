@@ -9,14 +9,14 @@ class SacctmgrException(Exception):
 class SacctmgrClient(object):
     def __init__(self):
         self.verbose = settings.SLURM_CLIENT_VERBOSE
-        self.dryrun = True
+        self.dryrun = False
         self.sacctmgr_path = settings.SLURM_SACCTMGR_LOCATION
 
-    def execute(self, cmd):
+    def execute(self, cmd, override=False):
         cmd_full = [self.sacctmgr_path, '-iP'] + cmd
         if self.verbose:
             print('Executing command: %s' % str(cmd_full))
-        if not self.dryrun:
+        if not self.dryrun or override:
             cp = subprocess.run(cmd_full, capture_output=True)
             # output is converted to utf8 string!
             return cp.returncode, cp.stdout.decode(), cp.stderr.decode()
@@ -66,9 +66,9 @@ class SacctmgrClient(object):
         self.execute(cmd)
 
     # gets
-    def get_user_defaccount_dict(self):
+    def get_user_default_account_dict(self):
         cmd = ['show', 'users', 'format=user,defaultaccount']
-        err, stdout, stderr = self.execute(cmd)
+        err, stdout, stderr = self.execute(cmd, True)
         user_dict = {}
         for line in stdout.split('\n')[1:]:
             if not line:
@@ -79,7 +79,7 @@ class SacctmgrClient(object):
 
     def get_account_list(self):
         cmd = ['show', 'accounts']
-        err, stdout, stderr = self.execute(cmd)
+        err, stdout, stderr = self.execute(cmd, True)
         account_list = []
         for line in stdout.split('\n')[1:]:
             if not line:
@@ -90,7 +90,7 @@ class SacctmgrClient(object):
 
     def get_assoc_dict(self):
         cmd = ['show', 'assoc', 'format=account,user,share,maxsubmit']
-        err, stdout, stderr = self.execute(cmd)
+        err, stdout, stderr = self.execute(cmd, True)
         assoc_dict = {}
         for line in stdout.split('\n')[1:]:
             if not line:
