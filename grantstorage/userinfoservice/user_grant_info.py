@@ -1,17 +1,32 @@
 from rest_framework import serializers
 
 
-class UserInfoSerializer(serializers.Serializer):
+class UserGrantInfoResponse(object):
+    def __init__(self, grant, group):
+        self.name = grant.name
+        self.start = grant.start
+        self.end = grant.end
+        self.state = group.status
+        self.allocations = grant.allocations
+        self.group = grant.group
+        self.group_members = group.members
+
+    def __str__(self):
+        return f"Grant name: {self.name}, start: {self.start}, end: {self.end}, state: {self.state}, " \
+               f"allocations: {self.allocations}, group: {self.group}, group members: {self.group_members}"
+
+
+class UserGrantInfoSerializer(serializers.Serializer):
     name = serializers.CharField()
-    start = serializers.DateTimeField()
-    end = serializers.DateTimeField()
+    start = serializers.DateField()
+    end = serializers.DateField()
     state = serializers.CharField()
     allocations = serializers.ListField(child=serializers.CharField())
     group = serializers.CharField()
     group_members = serializers.ListField(child=serializers.CharField())
 
     def create(self, validated_data):
-        return Grant(**validated_data)
+        return UserGrantInfoResponse(**validated_data)
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get("name", instance.name)
