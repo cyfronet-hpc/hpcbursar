@@ -7,27 +7,18 @@ from grantstorage.userinfoservice.user_grant_info import UserGrantInfoResponse, 
 
 
 class MungePermission(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if "Hbtoken" in request.headers and request.method in SAFE_METHODS:
-            # hbtoken = request.headers["Hbtoken"]
-            # bytes_hbtoken = str.encode(hbtoken)
-            # with pymunge.MungeContext() as ctx:
-            #     payload, uid, gid = ctx.decode(bytes_hbtoken)
-            #     if 'plgmattpokoras' == payload.decode("utf-8"):
-            print(request.user)
-            return request.user == obj.login
-
     def has_permission(self, request, view):
-        if "Hbtoken" in request.headers:
-            hbtoken = request.headers["Hbtoken"]
-            bytes_hbtoken = str.encode(hbtoken)
+        if "x-hb-auth-token" in request.headers:
+            encoded_x_hb_auth_token = str.encode(request.headers["x-hb-auth-token"])
             with pymunge.MungeContext() as ctx:
-                payload, uid, gid = ctx.decode(bytes_hbtoken)
-                if 'plgmattpokoras' == payload.decode("utf-8"):
-                    print("fsadfasdfsaf")
-        else:
-            print(request.headers)
-        return True
+                payload, uid, gid = ctx.decode(encoded_x_hb_auth_token)
+                decoded_payload = payload.decode('utf-8')
+                username, service_request = decoded_payload.split(":")
+                service_request_username = service_request.split("/")[-1]
+                if username == service_request_username:
+                    return True
+        print("No permission")
+        return False
 
 
 class UserGrantInfoView(APIView):
