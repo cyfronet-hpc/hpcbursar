@@ -59,8 +59,8 @@ class Command(BaseCommand):
                 status = portal_grant['state']
                 start = datetime.datetime.fromtimestamp(int(portal_grant['start']) / 1000).date()
                 end = datetime.datetime.fromtimestamp(int(portal_grant['end'] / 1000)).date()
-                # allocations = self.convert_allocation_to_localmodel(portal_grant['allocations'])
-                allocations = self.convert_allocation_to_localmodel(portal_grant['olaList'])
+                allocations = self.convert_allocation_to_localmodel(portal_grant['allocations'])
+                # allocations = self.convert_allocation_to_localmodel(portal_grant['olaList'])
                 grant = Grant(name=name, group=group, status=status, start=start, end=end, allocations=allocations)
                 grants += [grant]
             except:

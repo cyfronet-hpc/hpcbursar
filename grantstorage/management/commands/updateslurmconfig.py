@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from grantstorage.integration.slurmclient import SacctmgrClient
+from grantstorage.integration.sacctmgrclient import SacctmgrClient
 from django.conf import settings
 import json
 from grantstorage.localmodels.user import User, UserSerializer
