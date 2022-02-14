@@ -32,14 +32,14 @@ class Command(BaseCommand):
 
         resource_partition_mapping = settings.SLURM_RESOURCE_PARTITION_MAPPING
         partition_account = {}
-        for resource in resource_partition_mapping.values():
-            partition_account[resource] = []
+        for partition in resource_partition_mapping.values():
+            partition_account[partition] = []
 
         for grant in grants:
             if grant.is_active:
                 for allocation in grant.allocations:
-                    if allocation.resource in settings.SLURM_RESOURCE_PARTITION_MAPPING.items():
-                        partition_account[resource_partition_mapping[resource]] += [allocation.name]
+                    if allocation.resource in settings.SLURM_RESOURCE_PARTITION_MAPPING.keys():
+                        partition_account[resource_partition_mapping[allocation.resource]] += [allocation.name]
 
         for partition, accounts in partition_account.items():
             if not accounts:
