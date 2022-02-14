@@ -141,6 +141,6 @@ SLURM_SCONTROL_LOCATION = '/opt/slurm/releases/production/bin/scontrol'
 SLURM_SUPPORTED_RESOURCES = ['CPU', 'GPU']
 SLURM_RESOURCE_PARTITION_MAPPING = {
     'CPU': 'plgrid',
-    'GPU': 'plgrid-gpu'
+    'GPU': 'plgrid-gpu-v100'
 }
 SLURM_ACL_PLACEHOLDER = 'hpcb'
