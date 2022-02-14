@@ -98,7 +98,7 @@ class Command(BaseCommand):
         groups = self.convert_groups_to_localmodels(portal_groups)
         users = self.convert_users_to_localmodels(portal_users)
 
-        print('done downloading')
+        print('done downloading: grants: ' + str(len(grants)) + ', groups: ' + str(len(groups)) + ', users: ' + str(len(users)))
         ms = MongoStorage()
         ms.store_users(users)
         ms.store_groups(groups)
