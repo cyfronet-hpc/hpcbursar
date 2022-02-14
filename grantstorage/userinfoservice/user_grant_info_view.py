@@ -8,12 +8,10 @@ from grantstorage.userinfoservice.user_grant_info import UserGrantInfoResponse, 
 
 class MungePermission(BasePermission):
     def has_permission(self, request, view):
-        print(request.build_absolute_uri())
         if "x-auth-hpcbursar" in request.headers:
             encoded_x_hb_auth_token = str.encode(request.headers["x-auth-hpcbursar"])
             with pymunge.MungeContext() as ctx:
                 payload, uid, gid = ctx.decode(encoded_x_hb_auth_token)
-                print(payload)
                 decoded_payload = payload.decode('utf-8')
                 username, service_request = decoded_payload.split(":")
                 request_username = request.build_absolute_uri().split('/')[-1]
