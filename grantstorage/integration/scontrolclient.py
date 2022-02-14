@@ -8,7 +8,7 @@ class ScontrolException(Exception):
 
 class ScontrolClient(object):
     def __init__(self):
-        self.verbose = settings.SACC_CLIENT_VERBOSE
+        self.verbose = settings.SLURM_CLIENT_VERBOSE
         self.dryrun = False
         self.scontrol_path = settings.SLURM_SCONTROL_LOCATION
         self.acl_placeholder = settings.SLURM_ACL_PLACEHOLDER
