@@ -64,4 +64,5 @@ class ScontrolClient(object):
             start = accounts_raw.index(self.acl_placeholder) + 1
             end = accounts_raw.index(self.acl_placeholder, start)
             return accounts_raw[start:end]
-        return []
+        else:
+            return []
