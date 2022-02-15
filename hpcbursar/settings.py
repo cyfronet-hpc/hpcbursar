@@ -24,7 +24,6 @@ SECRET_KEY = 'django-insecure-a=(_+dl$t&+(qr=42&ur2up_yhlrbxh4z&#x^(3xc=l-k3=5km
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
@@ -123,10 +122,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ALLOWED_HOSTS = ['slurm01.ares.cyfronet.pl']
+ALLOWED_HOSTS = ['127.0.0.1', 'slurm01.ares.cyfronet.pl']
 
-GRID_CERTIFICATE_LOCATION = '/root/.tempcert/usercert.pem'
-GRID_KEY_LOCATION = '/root/.tempcert/userkey-insec.pem'
+GRID_CERTIFICATE_LOCATION = '/home/yaq/.globus/usercert.pem'
+GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
 
 PLGRID_PORTAL_URL = 'https://portal.plgrid.pl/'
 PLGRID_SITE_NAME = 'CYFRONET-ARES'
@@ -145,3 +144,5 @@ SLURM_RESOURCE_PARTITION_MAPPING = {
     'GPU': 'plgrid-gpu-v100'
 }
 SLURM_ACL_PLACEHOLDER = 'hpcb'
+
+SLURM_ADMIN_USER = 'yaq'
