@@ -120,7 +120,10 @@ class MongoStorage(object):
 
     # specific finds
     def find_groups_by_member(self, member):
-        return self.find_by_filter_template(Group, {'members': member})
+        return self.find_by_filter_template(Group, {'$or': [
+            {'leaders': member},
+            {'members': member}
+        ]})
 
     def find_grants_by_group(self, group):
         return self.find_by_filter_template(Grant, {'group': group})
