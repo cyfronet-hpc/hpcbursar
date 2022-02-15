@@ -6,7 +6,7 @@ from grantstorage.apicontroler.v1.apicontroler import UserServicesController
 from grantstorage.userinfoservice.user_grant_info import UserGrantInfoResponse, UserGrantInfoSerializer
 
 
-class MungePermission(BasePermission):
+class UserGrantInfoMungePermission(BasePermission):
     def has_permission(self, request, view):
         if "x-auth-hpcbursar" in request.headers:
             encoded_x_hb_auth_token = str.encode(request.headers["x-auth-hpcbursar"])
@@ -22,7 +22,7 @@ class MungePermission(BasePermission):
 
 
 class UserGrantInfoView(APIView):
-    permission_classes = [MungePermission]
+    permission_classes = [UserGrantInfoMungePermission]
 
     def get(self, request, login):
         user_service_controller = UserServicesController()
