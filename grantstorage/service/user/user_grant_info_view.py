@@ -3,7 +3,7 @@ from rest_framework.permissions import BasePermission
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from grantstorage.apicontroler.v1.apicontroler import UserServicesController
-from grantstorage.userinfoservice.user_grant_info import UserGrantInfoResponse, UserGrantInfoSerializer
+from grantstorage.service.user.user_grant_info import UserGrantInfoResponse, UserGrantInfoSerializer
 
 
 class UserGrantInfoMungePermission(BasePermission):
