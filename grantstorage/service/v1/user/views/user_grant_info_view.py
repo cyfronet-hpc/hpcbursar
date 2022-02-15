@@ -2,8 +2,8 @@ import pymunge
 from rest_framework.permissions import BasePermission
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from grantstorage.apicontroler.v1.apicontroler import UserServicesController
-from grantstorage.service.user.user_grant_info import UserGrantInfoResponse, UserGrantInfoSerializer
+from grantstorage.service.v1.user.controller.userservice import UserServicesController
+from grantstorage.service.v1.user.views.user_grant_info import UserGrantInfoResponse, UserGrantInfoSerializer
 
 
 class UserGrantInfoMungePermission(BasePermission):
