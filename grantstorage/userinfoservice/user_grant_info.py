@@ -22,7 +22,7 @@ class UserGrantInfoResponse(object):
         self.name = grant.name
         self.start = grant.start
         self.end = grant.end
-        self.state = group.status
+        self.state = grant.status
         self.allocations = grant.allocations
         self.group = grant.group
         self.group_members = group.members + group.leaders
