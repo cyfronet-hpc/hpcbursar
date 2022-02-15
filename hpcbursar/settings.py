@@ -24,7 +24,6 @@ SECRET_KEY = 'django-insecure-a=(_+dl$t&+(qr=42&ur2up_yhlrbxh4z&#x^(3xc=l-k3=5km
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -123,6 +122,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ALLOWED_HOSTS = ['slurm01.ares.cyfronet.pl']
 
 GRID_CERTIFICATE_LOCATION = '/root/.tempcert/usercert.pem'
 GRID_KEY_LOCATION = '/root/.tempcert/userkey-insec.pem'
