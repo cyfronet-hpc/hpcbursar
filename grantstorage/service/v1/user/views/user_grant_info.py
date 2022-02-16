@@ -40,16 +40,3 @@ class UserGrantInfoSerializer(serializers.Serializer):
     allocations = UserGrantInfoAllocationSerializer(many=True)
     group = serializers.CharField()
     group_members = serializers.ListField(child=serializers.CharField())
-
-    # def create(self, validated_data):
-    #     return UserGrantInfoResponse(**validated_data)
-    #
-    # def update(self, instance, validated_data):
-    #     instance.name = validated_data.get("name", instance.name)
-    #     instance.start = validated_data.get("start", instance.start)
-    #     instance.end = validated_data.get("end", instance.end)
-    #     instance.state = validated_data.get("state", instance.state)
-    #     instance.allocations = validated_data.get("allocations", instance.allocations)
-    #     instance.team = validated_data.get("group", instance.team)
-    #     instance.team_members = validated_data.get("group_members", instance.team_members)
-    #     return instance
