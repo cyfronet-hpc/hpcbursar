@@ -116,3 +116,6 @@ dmypy.json
 
 # pycharm stuff
 .idea/
+
+# Local settings
+/hpcbursar/local_settings.py
