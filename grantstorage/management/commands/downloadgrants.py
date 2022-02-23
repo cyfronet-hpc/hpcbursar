@@ -1,10 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from grantstorage.integration.portalclient import PortalClient
 from django.conf import settings
-import json
-from grantstorage.localmodels.user import User, UserSerializer
-from grantstorage.localmodels.group import Group, GroupSerializer
-from grantstorage.localmodels.grant import Grant, Allocation, GrantSerializer
+from grantstorage.localmodels.user import User
+from grantstorage.localmodels.group import Group
+from grantstorage.localmodels.grant import Grant, Allocation
 from grantstorage.storage.mongo.mongostorage import MongoStorage
 import datetime
 
@@ -89,7 +88,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.setup()
-
         portal_grants = self.pc.download_grants()
         portal_groups = self.pc.download_groups()
         portal_users = self.pc.download_users()
@@ -98,7 +96,8 @@ class Command(BaseCommand):
         groups = self.convert_groups_to_localmodels(portal_groups)
         users = self.convert_users_to_localmodels(portal_users)
 
-        print('done downloading: grants: ' + str(len(grants)) + ', groups: ' + str(len(groups)) + ', users: ' + str(len(users)))
+        print('done downloading: grants: ' + str(len(grants)) + ', groups: ' + str(len(groups)) + ', users: ' + str(
+            len(users)))
         ms = MongoStorage()
         ms.store_users(users)
         ms.store_groups(groups)

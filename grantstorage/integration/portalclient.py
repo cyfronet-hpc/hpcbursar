@@ -18,6 +18,7 @@ class PortalClient(object):
 
     def portal_request(self, url):
         response = requests.get(url, cert=(self.cert_path, self.key_path))
+        print()
         return response.json()
 
     def download_grants(self):
