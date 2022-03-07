@@ -1,7 +1,7 @@
 ALLOWED_HOSTS = ['127.0.0.1', 'slurm01.ares.cyfronet.pl']
 
-GRID_CERTIFICATE_LOCATION = '/home/yaq/.globus/usercert.pem'
-GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
+GRID_CERTIFICATE_LOCATION = 'path to your .pem file'
+GRID_KEY_LOCATION = 'path to your .key file'
 
 PLGRID_PORTAL_URL = 'https://portal.plgrid.pl/'
 PLGRID_SITE_NAME = 'CYFRONET-ARES'
@@ -21,4 +21,4 @@ SLURM_RESOURCE_PARTITION_MAPPING = {
 }
 SLURM_ACL_PLACEHOLDER = 'hpcb'
 
-SLURM_ADMIN_USER = 'yaq'
+SLURM_ADMIN_USER = 'admin user'
