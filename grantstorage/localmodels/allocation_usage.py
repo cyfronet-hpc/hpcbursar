@@ -60,8 +60,8 @@ class AllocationUsage:
 
 class AllocationUsageSerializer(serializers.Serializer):
     name = serializers.CharField()
-    summary = SummarySerializer()
-    usage = UsageSerializer()
+    summary = serializers.DictField()
+    usage = serializers.ListField(child=serializers.DictField())
 
     def create(self, validated_data):
         # handling summary and usage
@@ -83,6 +83,7 @@ class AllocationUsageSerializer(serializers.Serializer):
 
     @staticmethod
     def handle_summary_and_usage(validated_data):
+        # handling summary
         summary = []
         for sum_data in validated_data["summary"]:
             summary.append(Summary(**sum_data))
