@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from datetime import datetime
 
 
 # Summary class and Summary serializer
@@ -61,21 +60,10 @@ class AllocationUsageSerializer(serializers.Serializer):
     usage = UsageSerializer()
 
     def create(self, validated_data):
-        # TODO: finish create function
         return AllocationUsage(**validated_data)
 
     def update(self, instance, validated_data):
-        # TODO: finish update function
+        instance.name = validated_data("name", instance.name)
+        instance.summary = validated_data.get("summary", instance.summary)
+        instance.usage = validated_data("usage", instance.usage)
         return instance
-
-    """
-    @dev: is it needed? to check
-    """
-
-    @staticmethod
-    def handle_summary_and_usage(validated_data):
-        # handling summary
-        summary = []
-        for s_data in validated_data["summary"]:
-            summary.append(Summary(**s_data))
-        return summary
