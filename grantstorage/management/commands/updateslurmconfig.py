@@ -1,12 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from grantstorage.integration.sacctmgrclient import SacctmgrClient
 from django.conf import settings
-import json
-from grantstorage.localmodels.user import User, UserSerializer
-from grantstorage.localmodels.group import Group, GroupSerializer
-from grantstorage.localmodels.grant import Grant, Allocation, GrantSerializer
 from grantstorage.storage.mongo.mongostorage import MongoStorage
 import datetime
+
 
 class Command(BaseCommand):
     help = 'Generate Slurm sacct configuration based on grant/group/user data.'
