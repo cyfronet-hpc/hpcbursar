@@ -11,3 +11,12 @@ class UserServicesController:
             for k in grants:
                 grants_dict[k] = group
         return grants_dict
+
+    def user_allocation_info(self, login):
+        mongo_storage = MongoStorage()
+        groups = mongo_storage.find_groups_by_member(login)
+        allocations = {}
+        for group in groups:
+            allocation = mongo_storage.find_allocations_by_group(group.name)
+            # TODO: finish implementation of user_allocation_info
+        return allocations

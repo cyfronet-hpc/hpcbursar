@@ -3,44 +3,47 @@ from rest_framework import serializers
 
 # Summary class and Summary serializer
 class Summary(object):
-    def __init__(self, summary, last_update):
-        self.summary = summary
+    def __init__(self, last_update, resources):
         self.last_update = last_update
+        self.resources = resources
 
     def __repr__(self):
-        return f"SUMMARY: summary: {self.summary}, last update: {self.last_update}"
+        return f"SUMMARY: last update: {self.last_update}, summary: {self.resources}"
 
 
 class SummarySerializer(serializers.Serializer):
-    summary = serializers.CharField()
     last_update = serializers.DateTimeField()
+    resources = serializers.DictField()
 
     def create(self, validated_data):
         return Summary(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.summary = validated_data.get("summary", instance.summary)
         instance.last_update = validated_data.get("last_update", instance.last_update)
+        instance.resources = validated_data.get("resources", instance.resources)
         return instance
 
 
 # Usage class and Usage serializer
 class Usage(object):
-    def __init__(self, usage):
-        self.usage = usage
+    def __init__(self, timestamp, resources):
+        self.timestamp = timestamp
+        self.resources = resources
 
     def __repr__(self):
-        return f"USAGE: usage: {self.usage}"
+        return f"USAGE: timestamp: {self.timestamp}, resources: {self.resources}"
 
 
 class UsageSerializer(serializers.Serializer):
-    usage = serializers.ListField(child=serializers.DictField())
+    timestamp = serializers.DateTimeField()
+    resources = serializers.DictField()
 
     def create(self, validated_data):
         return Usage(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.usage = validated_data.get("usage", instance.usage)
+        instance.timestamp = validated_data.get("timestamp", instance.timestamp)
+        instance.resources = validated_data.get("resources", instance.resources)
         return instance
 
 

@@ -1,24 +1,28 @@
 from pymongo import MongoClient
 from grantstorage.localmodels.user import User, UserSerializer
 from grantstorage.localmodels.group import Group, GroupSerializer
-from grantstorage.localmodels.grant import Grant, Allocation, GrantSerializer
+from grantstorage.localmodels.grant import Grant, GrantSerializer
+from grantstorage.localmodels.allocation_usage import *
 
 MODEL_TYPE_TO_COLLECTION = {
     User: 'user',
     Group: 'group',
-    Grant: 'grant'
+    Grant: 'grant',
+    AllocationUsage: 'allocation_usage'
 }
 
 MODEL_TYPE_TO_SERIALIZER = {
     User: UserSerializer,
     Group: GroupSerializer,
-    Grant: GrantSerializer
+    Grant: GrantSerializer,
+    AllocationUsage: AllocationUsageSerializer
 }
 
 MODEL_TYPE_TO_NAMEFIELD = {
     User: 'login',
     Group: 'name',
-    Grant: 'name'
+    Grant: 'name',
+    AllocationUsage: 'allocation_usage'
 }
 
 
@@ -52,16 +56,12 @@ class MongoStorage(object):
         db = self.get_db()
 
         name_field = MODEL_TYPE_TO_NAMEFIELD[model_type]
-        # results = self.find_by_filter_template(model_type, {name_field: name})
-        # if not results:
-        #     return None
         document = db[MODEL_TYPE_TO_COLLECTION[model_type]].find_one({name_field: name})
         if not document:
             return document
         serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=document)
         serializer.is_valid()
         return serializer.save()
-        # return results[0]
 
     def find_all_template(self, model_type):
         db = self.get_db()
@@ -127,3 +127,6 @@ class MongoStorage(object):
 
     def find_grants_by_group(self, group):
         return self.find_by_filter_template(Grant, {'group': group})
+
+    def find_allocations_by_group(self, group):
+        return self.find_by_filter_template(AllocationUsage, {"group": group})
