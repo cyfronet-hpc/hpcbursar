@@ -18,5 +18,5 @@ class UserServicesController:
         allocations = {}
         for group in groups:
             allocation = mongo_storage.find_allocations_by_group(group.name)
-            # TODO: finish implementation of user_allocation_info
+            allocations[group] = allocation
         return allocations
