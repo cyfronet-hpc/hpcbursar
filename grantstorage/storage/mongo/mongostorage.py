@@ -84,6 +84,9 @@ class MongoStorage(object):
     def store_grant(self, grant):
         self.store_template(Grant, grant)
 
+    def store_allocation_usage(self, allocation_usage):
+        self.store_template(AllocationUsage, allocation_usage)
+
     # stores many
     # TODO: implement as bulk operation
     def store_users(self, users):
@@ -97,6 +100,10 @@ class MongoStorage(object):
     def store_grants(self, grants):
         for grant in grants:
             self.store_grant(grant)
+
+    def store_allocation_usages(self, allocation_usages):
+        for allocation in allocation_usages:
+            self.store_allocation_usage(allocation)
 
     # finds single
     def find_user_by_login(self, login):
@@ -128,5 +135,5 @@ class MongoStorage(object):
     def find_grants_by_group(self, group):
         return self.find_by_filter_template(Grant, {'group': group})
 
-    def find_allocations_by_group(self, group):
+    def find_allocation_usages_by_group(self, group):
         return self.find_by_filter_template(AllocationUsage, {"group": group})

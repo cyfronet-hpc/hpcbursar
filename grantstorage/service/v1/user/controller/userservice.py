@@ -17,6 +17,6 @@ class UserServicesController:
         groups = mongo_storage.find_groups_by_member(login)
         allocations = {}
         for group in groups:
-            allocation = mongo_storage.find_allocations_by_group(group.name)
+            allocation = mongo_storage.find_allocation_usages_by_group(group.name)
             allocations[group] = allocation
         return allocations

@@ -60,13 +60,25 @@ class AllocationUsage(object):
 class AllocationUsageSerializer(serializers.Serializer):
     name = serializers.CharField()
     summary = SummarySerializer()
-    usage = UsageSerializer()
+    usage = serializers.ListField(child=UsageSerializer())
 
     def create(self, validated_data):
+        usage = []
+        for u_data in validated_data["usage"]:
+            u = Usage(**u_data)
+            usage.append(u)
+        validated_data.update({"usage": usage})
         return AllocationUsage(**validated_data)
 
     def update(self, instance, validated_data):
         instance.name = validated_data("name", instance.name)
         instance.summary = validated_data.get("summary", instance.summary)
+
+        usage = []
+        for u_data in validated_data["usage"]:
+            u = Usage(**u_data)
+            usage.append(u)
+        validated_data.update({"usage": usage})
+
         instance.usage = validated_data("usage", instance.usage)
         return instance
