@@ -8,7 +8,7 @@ from grantstorage.service.v1.user.views.permission import UserGrantInfoMungePerm
 class UserGrantInfoView(APIView):
     permission_classes = [UserGrantInfoMungePermission]
 
-    def get(request, login):
+    def get(self, request, login):
         user_service_controller = UserServicesController()
         grants_dict = user_service_controller.user_grant_info(login)
         response = []

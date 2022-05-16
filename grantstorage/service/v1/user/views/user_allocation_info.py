@@ -1,13 +1,17 @@
 from rest_framework import serializers
 
 
-class UserAllocationSummary(object):
-    def __init__(self):
-        pass
+class AllocationUsagesResponse(object):
+    def __init__(self, allocation_usages):
+        self.name = allocation_usages.name
+        self.summary = allocation_usages.summary
+        self.usage = allocation_usages.usage
 
     def __str__(self):
-        pass
+        return f"Allocation usages: {self.name}, summary: {self.summary}, usage: {self.usage}"
 
 
-class UserAllocationSummarySerializer(serializers.Serializer):
-    pass
+class AllocationUsagesSerializer(serializers.Serializer):
+    name = serializers.CharField
+    summary = serializers.DictField()
+    usage = serializers.ListField(child=serializers.DictField())
