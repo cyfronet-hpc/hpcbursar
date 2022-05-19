@@ -66,7 +66,6 @@ class MongoStorage(object):
     def find_all_template(self, model_type):
         db = self.get_db()
 
-        name_field = MODEL_TYPE_TO_NAMEFIELD[model_type]
         documents = list(db[MODEL_TYPE_TO_COLLECTION[model_type]].find({}))
         if not documents:
             return documents
