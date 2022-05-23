@@ -8,7 +8,7 @@ MODEL_TYPE_TO_COLLECTION = {
     User: 'user',
     Group: 'group',
     Grant: 'grant',
-    AllocationUsage: 'allocation_usage'
+    AllocationUsage: 'allocation_usages'
 }
 
 MODEL_TYPE_TO_SERIALIZER = {
@@ -22,7 +22,7 @@ MODEL_TYPE_TO_NAMEFIELD = {
     User: 'login',
     Group: 'name',
     Grant: 'name',
-    AllocationUsage: 'allocation_usage'
+    AllocationUsage: 'allocation_usages'
 }
 
 
@@ -135,4 +135,4 @@ class MongoStorage(object):
         return self.find_by_filter_template(Grant, {'group': group})
 
     def find_allocation_usages_by_group(self, group):
-        return self.find_by_filter_template(AllocationUsage, {"group": group})
+        return self.find_by_filter_template(AllocationUsage, {"name": group})

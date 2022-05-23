@@ -26,16 +26,20 @@ class SummarySerializer(serializers.Serializer):
 
 # Usage class and Usage serializer
 class Usage(object):
-    def __init__(self, timestamp, resources):
+    def __init__(self, timestamp, start, end, resources):
         self.timestamp = timestamp
+        self.start = start
+        self.end = end
         self.resources = resources
 
     def __repr__(self):
-        return f"USAGE: timestamp: {self.timestamp}, resources: {self.resources}"
+        return f"USAGE: timestamp: {self.timestamp}, start: {self.start}, end: {self.end}, resources: {self.resources}"
 
 
 class UsageSerializer(serializers.Serializer):
     timestamp = serializers.DateTimeField()
+    start = serializers.DateTimeField()
+    end = serializers.DateTimeField()
     resources = serializers.DictField()
 
     def create(self, validated_data):
@@ -43,6 +47,8 @@ class UsageSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         instance.timestamp = validated_data.get("timestamp", instance.timestamp)
+        instance.start = validated_data.get("start", instance.start)
+        instance.end = validated_data.get("end", instance.end)
         instance.resources = validated_data.get("resources", instance.resources)
         return instance
 
