@@ -136,3 +136,28 @@ class MongoStorage(object):
 
     def find_allocation_usages_by_group(self, group):
         return self.find_by_filter_template(AllocationUsage, {"name": group})
+
+    # TODO update not finished yet
+    def update_usage_in_allocation_usages(self, group, ):
+        db = self.get_db()
+        documents = list(db["allocation_usages"].find({"name": group}))
+        if not documents:
+            return documents
+        for doc in documents:
+            usage = doc["uasge"]
+
+    # TODO delete_one needs to be checked if is working correctly
+    def remove_usage_in_allocation_usages(self, group, start_date, end_date):
+        db = self.get_db()
+        documents = list(db["allocation_usages"].find({"name": group}))
+        print(documents)
+        if not documents:
+            return documents
+        for doc in documents:
+            usage = doc["usage"]
+            for u in usage:
+                if u["start"] > start_date and u["end"] < end_date:
+                    usage.remove(u)
+                    db["allocation_usage"].delete_one(u)
+        serializer = AllocationUsageSerializer(data=documents, many=True)
+        return serializer.save()
