@@ -138,7 +138,7 @@ class MongoStorage(object):
         return self.find_by_filter_template(AllocationUsage, {"name": group})
 
     # TODO update not finished yet
-    def update_usage_in_allocation_usages(self, group, ):
+    def update_usage_in_allocation_usages(self, document, data):
         db = self.get_db()
         documents = list(db["allocation_usages"].find({"name": group}))
         if not documents:
@@ -155,9 +155,13 @@ class MongoStorage(object):
             return documents
         for doc in documents:
             usage = doc["usage"]
+            doc_id = doc["_id"]
             for u in usage:
                 if u["start"] > start_date and u["end"] < end_date:
                     usage.remove(u)
-                    db["allocation_usage"].delete_one(u)
+                    timestamp = u["timestamp"]
+                    db["allocation_usage"].update_one({"_id": doc_id},
+                                                      {"$pull": {"usage": {"timestamp": timestamp}}})
         serializer = AllocationUsageSerializer(data=documents, many=True)
+        serializer.is_valid()
         return serializer.save()
