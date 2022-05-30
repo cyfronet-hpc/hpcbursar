@@ -138,13 +138,12 @@ class MongoStorage(object):
         return self.find_by_filter_template(AllocationUsage, {"name": group})
 
     # TODO update not finished yet
-    def update_usage_in_allocation_usages(self, document, data):
+    def update_usage_in_allocation_usages(self, name, data):
         db = self.get_db()
-        documents = list(db["allocation_usages"].find({"name": group}))
-        if not documents:
-            return documents
-        for doc in documents:
-            usage = doc["uasge"]
+        db["allocation_usages"].update_one({"name": name}, {"$set": {"usage": data}})
+        serializer = AllocationUsageSerializer()
+        serializer.is_valid()
+        return serializer.save()
 
     # TODO delete_one needs to be checked if is working correctly
     def remove_usage_in_allocation_usages(self, group, start_date, end_date):
