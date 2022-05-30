@@ -14,9 +14,9 @@ class TestSummary(TestCase):
 
         summary_model = self.create_summary_model(last_update, resources)
 
-        self.assertEquals(summary_model.last_update, last_update)
-        self.assertEquals(summary_model.resources, resources)
-        self.assertEquals(summary_model.__repr__(), f"SUMMARY: last update: {last_update}, summary: {resources}")
+        self.assertEqual(summary_model.last_update, last_update)
+        self.assertEqual(summary_model.resources, resources)
+        self.assertEqual(summary_model.__repr__(), f"SUMMARY: last update: {last_update}, summary: {resources}")
 
     def test_summary_serializer_contains_expected_fields(self):
         summary_data = {"last_update": datetime(2020, 5, 17), "resources": {"hours": 4, "minutes": 5}}
@@ -50,11 +50,11 @@ class TestUsage(TestCase):
         resources = {"hours": 15, "minutes": 6}
         usage_model = self.create_usage_model(timestamp, start, end, resources)
 
-        self.assertEquals(usage_model.timestamp, timestamp)
+        self.assertEqual(usage_model.timestamp, timestamp)
         self.assertEqual(usage_model.start, start)
         self.assertEqual(usage_model.end, end)
-        self.assertEquals(usage_model.resources, resources)
-        self.assertEquals(usage_model.__repr__(),
+        self.assertEqual(usage_model.resources, resources)
+        self.assertEqual(usage_model.__repr__(),
                           f"USAGE: timestamp: {timestamp}, start: {start}, end: {end}, resources: {resources}")
 
     def test_usage_serializer_from_model(self):
@@ -90,10 +90,10 @@ class TestAllocationUsage(TestCase):
 
         allocation_usage_model = self.create_allocation_usage_model(name, summary, usage)
 
-        self.assertEquals(allocation_usage_model.name, name)
-        self.assertEquals(allocation_usage_model.summary, summary)
-        self.assertEquals(allocation_usage_model.usage, usage)
-        self.assertEquals(allocation_usage_model.__repr__(),
+        self.assertEqual(allocation_usage_model.name, name)
+        self.assertEqual(allocation_usage_model.summary, summary)
+        self.assertEqual(allocation_usage_model.usage, usage)
+        self.assertEqual(allocation_usage_model.__repr__(),
                           f"ALLOCATION USAGE: name: {name}, summary: {summary}, usage: {usage}")
 
     def test_allocation_usage_serializer_contains_expected_fields(self):
