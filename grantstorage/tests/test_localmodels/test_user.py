@@ -3,7 +3,8 @@ from grantstorage.localmodels.user import *
 
 
 class TestUser(TestCase):
-    def create_user_model(self, login, status):
+    @staticmethod
+    def create_user_model(login, status):
         return User(login, status)
 
     def test_user_model(self):
@@ -24,4 +25,33 @@ class TestUser(TestCase):
         self.assertEqual(data["status"], "ACTIVE")
 
     def test_user_serializer_from_model(self):
-        pass
+        login = "plgadmin"
+        status = "ACTIVE"
+
+        model = self.create_user_model(login, status)
+        serializer = UserSerializer(model)
+        data = serializer.data
+        self.assertEqual(set(data.keys()), {"login", "status"})
+        self.assertEqual(data["login"], "plgadmin")
+        self.assertEqual(data["status"], "ACTIVE")
+
+    def test_user_serializer_update(self):
+        user_data = {"login": "plgadmin", "status": "ACTIVE"}
+        serializer = UserSerializer(data=user_data)
+        self.assertEqual(serializer.is_valid(), True)
+        user = serializer.save()
+
+        data = serializer.data
+        self.assertEqual(set(data.keys()), {"login", "status"})
+        self.assertEqual(data["login"], "plgadmin")
+        self.assertEqual(data["status"], "ACTIVE")
+
+        new_data = {"login": "plgnewadmin", "status": "INACTIVE"}
+        new_model = serializer.update(instance=user, validated_data=new_data)
+        new_serializer = UserSerializer(new_model)
+        new_data = new_serializer.data
+        self.assertEqual(set(new_data.keys()), {"login", "status"})
+        self.assertEqual(new_data["login"], "plgnewadmin")
+        self.assertNotEqual(new_data["login"], "plgadmin")
+        self.assertEqual(new_data["status"], "INACTIVE")
+        self.assertNotEqual(new_data["login"], "ACTIVE")
