@@ -53,12 +53,6 @@ class TestGroup(TestCase):
         serializer = GroupSerializer(data=group_data)
         self.assertEqual(serializer.is_valid(), True)
         group = serializer.save()
-        data = serializer.data
-        self.assertEqual(set(data.keys()), {"name", "status", "members", "leaders"})
-        self.assertEqual(data["name"], "test_group")
-        self.assertEqual(data["status"], "ACCEPTED")
-        self.assertEqual(data["members"], ["plguser1", "plguser2", "plguser3"])
-        self.assertEqual(data["leaders"], ["plgadmin", "plguser1"])
 
         new_group_data = {"name": "new_test_group", "status": "INACTIVE",
                           "members": ["plgnewuser1", "plgnewuser2", "plgnewuser3"],
@@ -66,12 +60,16 @@ class TestGroup(TestCase):
         new_model = serializer.update(instance=group, validated_data=new_group_data)
         new_serializer = GroupSerializer(new_model)
         new_data = new_serializer.data
+
         self.assertEqual(set(new_data.keys()), {"name", "status", "members", "leaders"})
         self.assertEqual(new_data["name"], "new_test_group")
         self.assertNotEqual(new_data["name"], "test_group")
+
         self.assertEqual(new_data["status"], "INACTIVE")
         self.assertNotEqual(new_data["status"], "ACCEPTED")
+
         self.assertEqual(new_data["members"], ["plgnewuser1", "plgnewuser2", "plgnewuser3"])
         self.assertNotEqual(new_data["members"], ["plguser1", "plguser2", "plguser3"])
+
         self.assertEqual(new_data["leaders"], ["plgnewadmin"])
         self.assertNotEqual(new_data["leaders"], ["plgadmin", "plguser1"])

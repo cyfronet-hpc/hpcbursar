@@ -44,18 +44,16 @@ class TestSummary(TestCase):
         self.assertEqual(serializer.is_valid(), True)
         summary = serializer.save()
 
-        data = serializer.data
-        self.assertEqual(set(data.keys()), {'last_update', 'resources'})
-        self.assertEqual(data["last_update"], "2020-05-17T00:00:00Z")
-        self.assertEqual(data["resources"], {"hours": 4, "minutes": 5})
-
         new_data = {"last_update": datetime(2022, 6, 1), "resources": {"hours": 10, "minutes": 20}}
         new_model = serializer.update(instance=summary, validated_data=new_data)
         new_serializer = SummarySerializer(new_model)
         new_data = new_serializer.data
         self.assertEqual(set(new_data.keys()), {'last_update', 'resources'})
         self.assertEqual(new_data["last_update"], "2022-06-01T00:00:00Z")
+        self.assertNotEqual(new_data["last_update"], "2020-05-17T00:00:00Z")
+
         self.assertEqual(new_data["resources"], {"hours": 10, "minutes": 20})
+        self.assertNotEqual(new_data["resources"], {"hours": 4, "minutes": 5})
 
 
 class TestUsage(TestCase):
@@ -111,13 +109,6 @@ class TestUsage(TestCase):
         self.assertEqual(serializer.is_valid(), True)
         usage = serializer.save()
 
-        data = serializer.data
-        self.assertEqual(set(data.keys()), {"timestamp", "start", "end", "resources"})
-        self.assertEqual(data["timestamp"], "2020-05-17T00:00:00Z")
-        self.assertEqual(data["start"], "2020-05-15T00:00:00Z")
-        self.assertEqual(data["end"], "2020-05-16T00:00:00Z")
-        self.assertEqual(data["resources"], {"hours": 15, "minutes": 6})
-
         new_usage_data = {"timestamp": datetime(2022, 6, 1), "start": datetime(2022, 5, 28),
                           "end": datetime(2022, 5, 30), "resources": {"hours": 20, "minutes": 5}}
         new_model = serializer.update(instance=usage, validated_data=new_usage_data)
@@ -125,9 +116,16 @@ class TestUsage(TestCase):
         new_data = new_serializer.data
         self.assertEqual(set(new_data.keys()), {"timestamp", "start", "end", "resources"})
         self.assertEqual(new_data["timestamp"], "2022-06-01T00:00:00Z")
+        self.assertNotEqual(new_data["timestamp"], "2020-05-17T00:00:00Z")
+
         self.assertEqual(new_data["start"], "2022-05-28T00:00:00Z")
+        self.assertNotEqual(new_data["start"], "2022-06-01T00:00:00Z")
+
         self.assertEqual(new_data["end"], "2022-05-30T00:00:00Z")
+        self.assertNotEqual(new_data["end"], "2020-05-16T00:00:00Z")
+
         self.assertEqual(new_data["resources"], {"hours": 20, "minutes": 5})
+        self.assertNotEqual(new_data["resources"], {"hours": 15, "minutes": 6})
 
 
 class TestAllocationUsage(TestCase):
@@ -213,48 +211,44 @@ class TestAllocationUsage(TestCase):
              "resources": {"hours": 6, "minutes": 1}}])
 
     def test_allocation_usages_serializer_update(self):
-        pass
-        # allocation_usages_data = {
-        #     "name": "plggsoftware",
-        #     "summary": {"last_update": datetime(2020, 5, 7), "resources": {"hours": 10, "minutes": 3}},
-        #     "usage": [
-        #         {"timestamp": datetime(2020, 5, 4, 3), "start": datetime(2020, 5, 4, 1), "end": datetime(2020, 5, 4, 2),
-        #          "resources": {"hours": 4, "minutes": 2}},
-        #         {"timestamp": datetime(2020, 5, 5, 7), "start": datetime(2020, 5, 5, 5), "end": datetime(2020, 5, 5, 6),
-        #          "resources": {"hours": 6, "minutes": 1}}]
-        # }
-        # serializer = AllocationUsageSerializer(data=allocation_usages_data)
-        # self.assertEqual(serializer.is_valid(), True)
-        # allocation_usages = serializer.save()
-        # data = serializer.data
-        # self.assertEqual(set(data.keys()), {"name", "summary", "usage"})
-        # self.assertEqual(data["name"], "plggsoftware")
-        # self.assertEqual(data["summary"],
-        #                  OrderedDict({"last_update": "2020-05-07T00:00:00Z", "resources": {"hours": 10, "minutes": 3}}))
-        # self.assertEqual(data["usage"], [
-        #     {"timestamp": "2020-05-04T03:00:00Z", "start": "2020-05-04T01:00:00Z", "end": "2020-05-04T02:00:00Z",
-        #      "resources": {"hours": 4, "minutes": 2}},
-        #     {"timestamp": "2020-05-05T07:00:00Z", "start": "2020-05-05T05:00:00Z", "end": "2020-05-05T06:00:00Z",
-        #      "resources": {"hours": 6, "minutes": 1}}])
-        #
-        # new_allocation_usages_data = {
-        #     "name": "plggtraining",
-        #     "summary": {"last_update": datetime(2020, 5, 7), "resources": {"hours": 10, "minutes": 3}},
-        #     "usage": [
-        #         {"timestamp": datetime(2020, 5, 4, 3), "start": datetime(2020, 5, 4, 1), "end": datetime(2020, 5, 4, 2),
-        #          "resources": {"hours": 4, "minutes": 2}},
-        #         {"timestamp": datetime(2020, 5, 5, 7), "start": datetime(2020, 5, 5, 5), "end": datetime(2020, 5, 5, 6),
-        #          "resources": {"hours": 6, "minutes": 1}}]
-        # }
-        # new_model = serializer.update(instance=allocation_usages, validated_data=new_allocation_usages_data)
-        # new_serializer = AllocationUsageSerializer(new_model)
-        # new_data = new_serializer.data
-        # self.assertEqual(set(new_data.keys()), {"name", "summary", "usage"})
-        # self.assertEqual(new_data["name"], "plggtraining")
-        # self.assertEqual(new_data["summary"],
-        #                  OrderedDict({"last_update": "2022-06-01T00:00:00Z", "resources": {"hours": 10, "minutes": 3}}))
-        # self.assertEqual(new_data["usage"], [
-        #     {"timestamp": "2020-05-04T03:00:00Z", "start": "2020-05-04T01:00:00Z", "end": "2020-05-04T02:00:00Z",
-        #      "resources": {"hours": 4, "minutes": 2}},
-        #     {"timestamp": "2020-05-05T07:00:00Z", "start": "2020-05-05T05:00:00Z", "end": "2020-05-05T06:00:00Z",
-        #      "resources": {"hours": 6, "minutes": 1}}])
+        allocation_usages_data = {
+            "name": "plggsoftware",
+            "summary": {"last_update": datetime(2020, 5, 7), "resources": {"hours": 10, "minutes": 3}},
+            "usage": [
+                {"timestamp": datetime(2020, 5, 4, 3), "start": datetime(2020, 5, 4, 1), "end": datetime(2020, 5, 4, 2),
+                 "resources": {"hours": 4, "minutes": 2}},
+                {"timestamp": datetime(2020, 5, 5, 7), "start": datetime(2020, 5, 5, 5), "end": datetime(2020, 5, 5, 6),
+                 "resources": {"hours": 6, "minutes": 1}}]
+        }
+        serializer = AllocationUsageSerializer(data=allocation_usages_data)
+        self.assertEqual(serializer.is_valid(), True)
+        allocation_usages = serializer.save()
+
+        new_allocation_usages_data = {
+            "name": "plggtraining",
+            "summary": {"last_update": datetime(2022, 6, 1), "resources": {"hours": 20, "minutes": 0}},
+            "usage": [
+                {"timestamp": datetime(2022, 6, 1), "start": datetime(2022, 5, 27, 1), "end": datetime(2022, 5, 30, 2),
+                 "resources": {"hours": 10, "minutes": 0}}]
+        }
+        new_model = serializer.update(instance=allocation_usages, validated_data=new_allocation_usages_data)
+        new_serializer = AllocationUsageSerializer(new_model)
+        new_data = new_serializer.data
+
+        self.assertEqual(set(new_data.keys()), {"name", "summary", "usage"})
+        self.assertEqual(new_data["name"], "plggtraining")
+        self.assertNotEqual(new_data["name"], "plggsoftware")
+
+        self.assertEqual(new_data["summary"],
+                         OrderedDict({"last_update": "2022-06-01T00:00:00Z", "resources": {"hours": 20, "minutes": 0}}))
+        self.assertNotEqual(new_data["summary"], OrderedDict(
+            {"last_update": "2022-05-07T00:00:00Z", "resources": {"hours": 10, "minutes": 3}}))
+
+        self.assertEqual(new_data["usage"], [
+            {"timestamp": "2022-06-01T00:00:00Z", "start": "2022-05-27T01:00:00Z", "end": "2022-05-30T02:00:00Z",
+             "resources": {"hours": 10, "minutes": 0}}])
+        self.assertNotEqual(new_data["usage"], [
+            {"timestamp": "2020-05-04T03:00:00Z", "start": "2020-05-04T01:00:00Z", "end": "2020-05-04T02:00:00Z",
+             "resources": {"hours": 4, "minutes": 2}},
+            {"timestamp": "2020-05-05T07:00:00Z", "start": "2020-05-05T05:00:00Z", "end": "2020-05-05T06:00:00Z",
+             "resources": {"hours": 6, "minutes": 1}}])
