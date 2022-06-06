@@ -119,3 +119,4 @@ dmypy.json
 
 # Local settings
 /hpcbursar/local_settings.py
+/grantstorage/management/commands/testfunc.py

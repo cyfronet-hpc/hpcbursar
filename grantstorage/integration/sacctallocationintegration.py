@@ -18,7 +18,7 @@ class SacctAllocationClient(object):
             return cp.returncode, cp.stdout.decode(), cp.stderr.decode()
         return 0, "", ""
 
-    # sacct -X -D
+    # sacct -X -P
     def example_cmd(self):
-        cmd = ["-X", "-D"]
+        cmd = ["-XP"]
         self.execute(cmd)
