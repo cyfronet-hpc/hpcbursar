@@ -77,7 +77,7 @@ class AllocationUsageSerializer(serializers.Serializer):
         return AllocationUsage(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.name = validated_data("name", instance.name)
+        instance.name = validated_data.get("name", instance.name)
         instance.summary = validated_data.get("summary", instance.summary)
 
         usage = []
@@ -86,5 +86,5 @@ class AllocationUsageSerializer(serializers.Serializer):
             usage.append(u)
         validated_data.update({"usage": usage})
 
-        instance.usage = validated_data("usage", instance.usage)
+        instance.usage = validated_data.get("usage", instance.usage)
         return instance
