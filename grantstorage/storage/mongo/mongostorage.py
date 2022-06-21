@@ -134,31 +134,40 @@ class MongoStorage(object):
     def find_grants_by_group(self, group):
         return self.find_by_filter_template(Grant, {'group': group})
 
-    def find_allocation_usages_by_group(self, group):
-        return self.find_by_filter_template(AllocationUsage, {"name": group})
+    def find_allocation_usages_by_name(self, name):
+        return self.find_by_filter_template(AllocationUsage, {"name": name})
 
-    def update_usage_in_allocation_usages(self, group, data):
+    def find_allocations_by_group(self, group):
+        grants = self.find_grants_by_group(group)
+        allocations = []
+        for g in grants:
+            allocations.append(g.allocations)
+        return allocations
+
+    def update_usage_in_allocation_usages(self, allocation_name, data):
         db = self.get_db()
-        documents = list(db["allocation_usages"].find({"name": group}))
-        if not documents:
+        allocations = self.find_allocation_usages_by_name(allocation_name)
+        if not allocations:
             raise Exception("Wrong name")
-        for doc in documents:
-            usage = doc["usage"]
+        for alloc in allocation_name:
+            usage = alloc["usage"]
             usage.append(data)
-            db["allocation_usages"].update_one({"name": group}, {"$set": {"usage": usage}})
-            # TODO update working but how to get serializer instance
-        return
+            db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"usage": usage}})
+        serializer = MODEL_TYPE_TO_SERIALIZER[AllocationUsage](data=allocations, many=True)
+        serializer.is_valid()
+        return serializer.save()
 
-    def remove_usage_in_allocation_usages(self, group, start_date, end_date):
+    def remove_usage_in_allocation_usages(self, allocation_name, start_date, end_date):
         db = self.get_db()
-        documents = list(db["allocation_usages"].find({"name": group}))
-        if not documents:
+        allocations = self.find_allocation_usages_by_name(allocation_name)
+        if not allocations:
             raise Exception("Wrong name")
-        for doc in documents:
-            usage = doc["usage"]
+        for alloc in allocations:
+            usage = alloc["usage"]
             for u in usage:
                 if u["start"] > start_date and u["end"] < end_date:
                     usage.remove(u)
-            db["allocation_usages"].update_one({"name": group}, {"$set": {"usage": usage}})
-            # TODO remove working but ho to get serializer instance
-        return
+            db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"usage": usage}})
+        serializer = MODEL_TYPE_TO_SERIALIZER[AllocationUsage](data=allocations, many=True)
+        serializer.is_valid()
+        return serializer.save()
