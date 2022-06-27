@@ -1,5 +1,4 @@
 import subprocess
-import re
 from django.conf import settings
 
 
@@ -31,16 +30,13 @@ class SacctAllocationClient(object):
         self.sacctmgt_path = settings.SLURM_SACCTMGR_LOCATION
 
     def execute(self, cmd, override=False):
-        # cmd_full = [self.sacctmgt_path, "-iP"] + cmd
-        cmd_full = ["ssh", "centos@149.156.182.192"] + cmd
-        # if self.verbose:
-        #     print('Executing command: %s' % str(cmd_full))
-        cp = subprocess.run(cmd_full, stdout=subprocess.PIPE, text=True)
-        return cp.returncode, cp.stdout, cp.stderr
-        # if not self.dryrun or override:
-        #     cp = subprocess.run(cmd_full, stdout=subprocess.PIPE, text=True)
-        #     return cp.returncode, cp.stdout, cp.stderr
-        # return 0, "", ""
+        cmd_full = [self.sacctmgt_path, "-iP"] + cmd
+        if self.verbose:
+            print('Executing command: %s' % str(cmd_full))
+        if not self.dryrun or override:
+            cp = subprocess.run(cmd_full, stdout=subprocess.PIPE, text=True)
+            return cp.returncode, cp.stdout, cp.stderr
+        return 0, "", ""
 
     def sacct_command(self, start, end):
         command = f"sacct -D -P -X -s 'BF,CA,CD,F,NF,OOM,PR,TO,DL,RQ' -S{start} -E{end} --format JobID,User,Group,Account,ReservationId,Partition,Submit,Start,End,NodeList,CPUTimeRAW,ElapsedRaw,MaxRSS,ExitCode,NCPUS,ReqTRES"
@@ -52,8 +48,7 @@ class SacctAllocationClient(object):
         cost = 0
         for i in range(1, len(output)):
             split_alloc = output[i].split("|")
-            # allocation_type = self.PARTITION_ALLOCATION_MAP[split_alloc[5]]
-            allocation_type = "CPU"
+            allocation_type = self.PARTITION_ALLOCATION_MAP[split_alloc[5]]
             elapsed_raw = split_alloc[11]
             req_tres = split_alloc[15]
             price = self.parse_req_tres(req_tres, allocation_type)
