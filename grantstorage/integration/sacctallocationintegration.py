@@ -18,6 +18,7 @@ class SacctAllocationClient(object):
     }
 
     UNIT_FACTOR = {
+        "": 0.000000001,
         "K": 0.000001,
         "M": 0.001,
         "G": 1,
