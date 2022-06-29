@@ -1,22 +1,9 @@
 import subprocess
 from django.conf import settings
+from hpcbursar.settings import *
 
 
 class SacctAllocationClient(object):
-    PER_ALLOCATION = {
-        "MEM_PER_GPU": 384 / 8,
-        "CPU_PER_GPU": 36 / 8,
-        "MEM_PER_CPU": 192 / 48,
-        "MEM_PER_CPU_BIG_MEM": 384 / 48
-    }
-
-    PARTITION_ALLOCATION_MAP = {
-        "plgrid-gpu-v100": "GPU",
-        "plgrid": "CPU",
-        "plgrid-long": "CPU",
-        "plgrid-bigmem": "CPU_BIG_MEM"
-    }
-
     UNIT_FACTOR = {
         "": 0.000000001,
         "K": 0.000001,
@@ -24,6 +11,8 @@ class SacctAllocationClient(object):
         "G": 1,
         "T": 1000
     }
+
+    COLUMN_MAP = {}
 
     def __int__(self):
         self.verbose = settings.SLURM_CLIENT_VERBOSE
@@ -49,16 +38,34 @@ class SacctAllocationClient(object):
         cost = 0
         for i in range(1, len(output)):
             split_alloc = output[i].split("|")
-            allocation_type = self.PARTITION_ALLOCATION_MAP[split_alloc[5]]
-            elapsed_raw = split_alloc[11]
-            req_tres = split_alloc[15]
-            price = self.parse_req_tres(req_tres, allocation_type)
-            cost += int(elapsed_raw) / 3600 * price
+            self.elements_to_job(split_alloc)
+            price = self.parse_req_tres()
+            cost += int(self.COLUMN_MAP["Elapsed"]) / 3600 * price
         return cost
 
-    def parse_req_tres(self, req_tres, allocation_type):
-        parsed_req_tres = req_tres.split(",")
-        gpu = cpu = memory = ""
+    def elements_to_job(self, elements):
+        self.COLUMN_MAP = {
+            "JobID": elements[0],
+            "User": elements[1],
+            "Group": elements[2],
+            "Account": elements[3],
+            "ReservationId": elements[4],
+            "Partition": elements[5],
+            "Submit": elements[6],
+            "Start": elements[7],
+            "End": elements[8],
+            "NodeList": elements[9],
+            "CPUTimeRAW": elements[10],
+            "Elapsed": elements[11],
+            "MaxRSS": elements[12],
+            "ExitCode": elements[13],
+            "NCPUS": elements[14],
+            "ReqTRES": elements[15]
+        }
+
+    def parse_req_tres(self):
+        parsed_req_tres = self.COLUMN_MAP["ReqTRES"].split(",")
+        gpu = cpu = memory = 0
         for rt in parsed_req_tres:
             if rt.find("gpu") != -1:
                 gpu_values = rt.split("=")
@@ -69,22 +76,30 @@ class SacctAllocationClient(object):
             elif rt.find("mem") != -1:
                 memory_values = rt.split("=")
                 memory = self.convert_to_megabytes(memory_values[-1])
-        if allocation_type == "GPU":
-            return self.calculate_gpu_price(gpu, cpu, memory)
-        elif allocation_type == "CPU":
-            return self.calculate_cpu_price(cpu, memory)
-        elif allocation_type == "CPU_BIG_MEM":
-            return self.calculate_cpu_big_mem_price(cpu, memory)
-        return 0
+        allocation_type = PARTITION_ALLOCATION_MAP[self.COLUMN_MAP["Partition"]]
+        args = {"gpu": gpu,
+                "cpu": cpu,
+                "memory": memory}
+        return self.ALLOC_TYPE_TO_FUNC[allocation_type](args)
 
-    def calculate_gpu_price(self, gpu, cpu, memory):
-        return max(gpu, memory / self.PER_ALLOCATION["MEM_PER_GPU"], cpu / self.PER_ALLOCATION["CPU_PER_GPU"])
+    @staticmethod
+    def calculate_gpu_price(args):
+        return max(args["gpu"], args["memory"] / PER_ALLOCATION["MEM_PER_GPU"],
+                   args["cpu"] / PER_ALLOCATION["CPU_PER_GPU"])
 
-    def calculate_cpu_price(self, cpu, memory):
-        return max(cpu, memory / self.PER_ALLOCATION["MEM_PER_CPU"])
+    @staticmethod
+    def calculate_cpu_price(args):
+        return max(args["cpu"], args["memory"] / PER_ALLOCATION["MEM_PER_CPU"])
 
-    def calculate_cpu_big_mem_price(self, cpu, memory):
-        return max(cpu, memory / self.PER_ALLOCATION["MEM_PER_CPU_BIG_MEM"])
+    @staticmethod
+    def calculate_cpu_big_mem_price(args):
+        return max(args["cpu"], args["memory"] / PER_ALLOCATION["MEM_PER_CPU_BIG_MEM"])
+
+    ALLOC_TYPE_TO_FUNC = {
+        "GPU": calculate_gpu_price,
+        "CPU": calculate_cpu_price,
+        "CPU_BIG_MEM": calculate_cpu_big_mem_price
+    }
 
     def convert_to_megabytes(self, memory_allocation):
         unit = memory_allocation[-1]
