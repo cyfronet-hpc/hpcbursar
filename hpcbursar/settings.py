@@ -147,5 +147,18 @@ SLURM_ACL_PLACEHOLDER = 'hpcb'
 
 SLURM_ADMIN_USER = 'admin user'
 
+PER_ALLOCATION = {
+    "MEM_PER_GPU": 384 / 8,
+    "CPU_PER_GPU": 36 / 8,
+    "MEM_PER_CPU": 192 / 48,
+    "MEM_PER_CPU_BIG_MEM": 384 / 48
+}
+
+PARTITION_ALLOCATION_MAP = {
+    "plgrid-gpu-v100": "GPU",
+    "plgrid": "CPU",
+    "plgrid-long": "CPU",
+    "plgrid-bigmem": "CPU_BIG_MEM"
+}
 # overwriting settings with default ones
 from hpcbursar.local_settings import *
