@@ -22,7 +22,8 @@ MODEL_TYPE_TO_NAMEFIELD = {
     User: 'login',
     Group: 'name',
     Grant: 'name',
-    AllocationUsage: 'allocation_usages'
+    AllocationUsage: 'name'
+    # TODO check this
 }
 
 
