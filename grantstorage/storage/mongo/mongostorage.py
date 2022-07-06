@@ -23,7 +23,6 @@ MODEL_TYPE_TO_NAMEFIELD = {
     Group: 'name',
     Grant: 'name',
     AllocationUsage: 'name'
-    # TODO check this
 }
 
 
