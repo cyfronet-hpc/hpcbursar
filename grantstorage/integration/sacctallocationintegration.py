@@ -1,9 +1,26 @@
 import subprocess
 from django.conf import settings
-from hpcbursar.settings import *
+from hpcbursar import settings
+from datetime import datetime, timedelta
+
+
+def get_current_hour():
+    now = datetime.now().replace(minute=0, second=0, microsecond=0)
+    return now.strftime("%H:%M:%S")
+
+
+def get_last_hour():
+    now = datetime.now().replace(minute=0, second=0, microsecond=0)
+    hour_before = now - timedelta(hours=1)
+    return hour_before.strftime("%H:%M:%S")
 
 
 class SacctAllocationClient(object):
+    def __init__(self):
+        self.verbose = settings.SLURM_CLIENT_VERBOSE
+        self.dryrun = False
+        self.sacctmgt_path = settings.SLURM_SACCTMGR_LOCATION
+
     UNIT_FACTOR = {
         "": 0.000000001,
         "K": 0.000001,
@@ -14,11 +31,6 @@ class SacctAllocationClient(object):
 
     COLUMN_MAP = {}
 
-    def __int__(self):
-        self.verbose = settings.SLURM_CLIENT_VERBOSE
-        self.dryrun = False
-        self.sacctmgt_path = settings.SLURM_SACCTMGR_LOCATION
-
     def execute(self, cmd, override=False):
         cmd_full = [self.sacctmgt_path, "-iP"] + cmd
         if self.verbose:
@@ -28,7 +40,7 @@ class SacctAllocationClient(object):
             return cp.returncode, cp.stdout, cp.stderr
         return 0, "", ""
 
-    def sacct_command(self, start, end):
+    def sacct_command(self, start=get_last_hour(), end=get_current_hour()):
         command = f"sacct -D -P -X -s 'BF,CA,CD,F,NF,OOM,PR,TO,DL,RQ' -S{start} -E{end} --format JobID,User,Group,Account,ReservationId,Partition,Submit,Start,End,NodeList,CPUTimeRAW,ElapsedRaw,MaxRSS,ExitCode,NCPUS,ReqTRES"
         command = command.split()
         return_code, output, stderr = self.execute(command)
@@ -76,24 +88,21 @@ class SacctAllocationClient(object):
             elif rt.find("mem") != -1:
                 memory_values = rt.split("=")
                 memory = self.convert_to_megabytes(memory_values[-1])
-        allocation_type = PARTITION_ALLOCATION_MAP[self.COLUMN_MAP["Partition"]]
+        allocation_type = settings.PARTITION_ALLOCATION_MAP[self.COLUMN_MAP["Partition"]]
         args = {"gpu": gpu,
                 "cpu": cpu,
                 "memory": memory}
         return self.ALLOC_TYPE_TO_FUNC[allocation_type](args)
 
-    @staticmethod
     def calculate_gpu_price(args):
-        return max(args["gpu"], args["memory"] / PER_ALLOCATION["MEM_PER_GPU"],
-                   args["cpu"] / PER_ALLOCATION["CPU_PER_GPU"])
+        return max(args["gpu"], args["memory"] / settings.PER_ALLOCATION["MEM_PER_GPU"],
+                   args["cpu"] / settings.PER_ALLOCATION["CPU_PER_GPU"])
 
-    @staticmethod
     def calculate_cpu_price(args):
-        return max(args["cpu"], args["memory"] / PER_ALLOCATION["MEM_PER_CPU"])
+        return max(args["cpu"], args["memory"] / settings.PER_ALLOCATION["MEM_PER_CPU"])
 
-    @staticmethod
     def calculate_cpu_big_mem_price(args):
-        return max(args["cpu"], args["memory"] / PER_ALLOCATION["MEM_PER_CPU_BIG_MEM"])
+        return max(args["cpu"], args["memory"] / settings.PER_ALLOCATION["MEM_PER_CPU_BIG_MEM"])
 
     ALLOC_TYPE_TO_FUNC = {
         "GPU": calculate_gpu_price,

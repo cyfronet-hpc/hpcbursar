@@ -144,30 +144,39 @@ class MongoStorage(object):
             allocations.append(g.allocations)
         return allocations
 
+    # TODO repair update usage
     def update_usage_in_allocation_usages(self, allocation_name, data):
         db = self.get_db()
         allocations = self.find_allocation_usages_by_name(allocation_name)
         if not allocations:
             raise Exception("Wrong name")
-        for alloc in allocation_name:
-            usage = alloc["usage"]
-            usage.append(data)
-            db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"usage": usage}})
-        serializer = MODEL_TYPE_TO_SERIALIZER[AllocationUsage](data=allocations, many=True)
+        # for alloc in allocations:
+        #     usage = alloc.usage
+        #     summary = alloc.summary
+        #     for i in range(len(usage)):
+        #         usage[i] = json.dumps(usage[i].__dict__, default=str)
+        #     usage.append(data)
+        #     db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"usage": usage}})
+        # serializer = AllocationUsageSerializer(data=)
         serializer.is_valid()
         return serializer.save()
 
+    # TODO repair remove usage
     def remove_usage_in_allocation_usages(self, allocation_name, start_date, end_date):
         db = self.get_db()
         allocations = self.find_allocation_usages_by_name(allocation_name)
         if not allocations:
             raise Exception("Wrong name")
         for alloc in allocations:
-            usage = alloc["usage"]
+            usage = alloc.usage
+            summary = alloc.summary
             for u in usage:
-                if u["start"] > start_date and u["end"] < end_date:
+                if u.start > start_date and u.end < end_date:
                     usage.remove(u)
-            db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"usage": usage}})
+                    a = summary["resources"]
+                    print(a)
+            # db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"usage":}})
+            # db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"summary":}})
         serializer = MODEL_TYPE_TO_SERIALIZER[AllocationUsage](data=allocations, many=True)
         serializer.is_valid()
         return serializer.save()
