@@ -10,14 +10,13 @@ class Command(BaseCommand):
         self.ms = MongoStorage()
         self.sc = SacctAllocationClient()
 
-    def calculate_allocations(self):
-        pass
-
     def handle(self, *args, **options):
         # TODO handle not finished yet
         self.setup()
+        member = args
+        groups = self.ms.find_groups_by_member(member)
+        for g in groups:
+            allocation_usage = self.ms.find_allocations_by_group(g)
+            self.ms.store_allocation_usage(allocation_usage)
 
-        groups = self.ms.find_groups_by_member()
-        allocation_usages = self.ms.find_allocation_usages_by_group(groups)
-
-        self.ms.store_allocation_usages(allocation_usages)
+        self.sc.sacct_command()

@@ -9,5 +9,5 @@ urlpatterns = [
     # admin
     path('api/v1/admin/grants_group_info/', AdminGrantGroupInfoView.as_view(), name="admin"),
     # allocation usage
-    path('api/v1/allocation_usage', UserAllocationInfoView.as_view(), name="allocations_info")
+    # path('api/v1/allocation_usage', UserAllocationInfoView.as_view(), name="allocations_info")
 ]

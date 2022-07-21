@@ -150,14 +150,14 @@ class MongoStorage(object):
         allocations = self.find_allocation_usages_by_name(allocation_name)
         if not allocations:
             raise Exception("Wrong name")
-        # for alloc in allocations:
-        #     usage = alloc.usage
-        #     summary = alloc.summary
-        #     for i in range(len(usage)):
-        #         usage[i] = json.dumps(usage[i].__dict__, default=str)
-        #     usage.append(data)
-        #     db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"usage": usage}})
-        # serializer = AllocationUsageSerializer(data=)
+        for alloc in allocations:
+            usage = alloc.usage
+            summary = alloc.summary
+            for i in range(len(usage)):
+                print(usage[i])
+            usage.append(data)
+            db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"usage": usage}})
+        serializer = AllocationUsageSerializer(data=data)
         serializer.is_valid()
         return serializer.save()
 
