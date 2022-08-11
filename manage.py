@@ -1,4 +1,9 @@
-#!/usr/bin/env python
+# Copyright 2022 ACC Cyfronet AGH-UST
+
+# Licensed under the Apache License, Version 2.0,
+# copy of the license is available in the LICENSE file;
+
+# !/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 import os
 import sys

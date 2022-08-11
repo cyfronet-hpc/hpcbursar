@@ -1,3 +1,8 @@
+# Copyright 2022 ACC Cyfronet AGH-UST
+
+# Licensed under the Apache License, Version 2.0,
+# copy of the license is available in the LICENSE file;
+
 from django.test import TestCase
 from grantstorage.storage.mongo.mongostorage import *
 from pymongo import MongoClient
@@ -264,7 +269,7 @@ class TestMongoStorageSpecificFinds(TestCase):
                                              "resources": {"hours": 10, "minutes": 30}}])
         ms.store_allocation_usage(allocation_usage)
 
-    # TODO: repair update usage, not working yet
+    # TODO: repair update usage, still not working
     def test_update_usage_in_allocation_usages(self):
         ms = MongoStorage()
         allocation_usage = AllocationUsage("update_test_name",
@@ -284,7 +289,9 @@ class TestMongoStorageSpecificFinds(TestCase):
                         "end": datetime(2011, 5, 29, tzinfo=timezone.utc),
                         "resources": {"hours": 14, "minutes": 1}}
         result = ms.update_usage_in_allocation_usages("update_test_name", updated_data)
+        self.assertEqual(allocation_usage.name, result)
 
+    # TODO: repair remove usage, still not working
     def test_remove_usage_in_allocation_usages(self):
         ms = MongoStorage()
         allocation_usage = AllocationUsage("plggtraining",
@@ -300,5 +307,5 @@ class TestMongoStorageSpecificFinds(TestCase):
                                              "resources": {"hours": 5.5}}])
         ms.store_allocation_usage(allocation_usage)
 
-        # result = ms.remove_usage_in_allocation_usages("remove_test_name", datetime(2011, 5, 10, tzinfo=timezone.utc),
-        #                                               datetime(2011, 5, 19, tzinfo=timezone.utc))
+        result = ms.remove_usage_in_allocation_usages("remove_test_name", datetime(2011, 5, 10, tzinfo=timezone.utc),
+                                                      datetime(2011, 5, 19, tzinfo=timezone.utc))

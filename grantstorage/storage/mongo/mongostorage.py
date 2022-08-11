@@ -1,8 +1,14 @@
+# Copyright 2022 ACC Cyfronet AGH-UST
+
+# Licensed under the Apache License, Version 2.0,
+# copy of the license is available in the LICENSE file;
+
 from pymongo import MongoClient
 from grantstorage.localmodels.user import User, UserSerializer
 from grantstorage.localmodels.group import Group, GroupSerializer
 from grantstorage.localmodels.grant import Grant, GrantSerializer
 from grantstorage.localmodels.allocation_usage import *
+from datetime import datetime, timezone
 
 MODEL_TYPE_TO_COLLECTION = {
     User: 'user',
@@ -144,24 +150,34 @@ class MongoStorage(object):
             allocations.append(g.allocations)
         return allocations
 
-    # TODO repair update usage
+    # TODO repair update usage, still not working
     def update_usage_in_allocation_usages(self, allocation_name, data):
         db = self.get_db()
         allocations = self.find_allocation_usages_by_name(allocation_name)
         if not allocations:
             raise Exception("Wrong name")
-        for alloc in allocations:
-            usage = alloc.usage
-            summary = alloc.summary
-            for i in range(len(usage)):
-                print(usage[i])
-            usage.append(data)
-            db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"usage": usage}})
-        serializer = AllocationUsageSerializer(data=data)
-        serializer.is_valid()
+        if len(allocations) == 0:
+            return None
+        allocation = allocations[0]
+        db["allocation_usages"].update_one({"name": allocation_name}, {"$push": {"usage": data}})
+        # problem here
+        allocation_usage = AllocationUsage(name="update_test_name",
+                                           summary={"last_update": datetime(2011, 5, 20, tzinfo=timezone.utc),
+                                                    "resources": {"hours": 20, "minutes": 3}},
+                                           usage=[{"timestamp": datetime(2011, 5, 10, tzinfo=timezone.utc),
+                                                   "start": datetime(2011, 5, 8, tzinfo=timezone.utc),
+                                                   "end": datetime(2011, 5, 10, tzinfo=timezone.utc),
+                                                   "resources": {"hours": 15, "minutes": 2}},
+                                                  {"timestamp": datetime(2011, 5, 20, tzinfo=timezone.utc),
+                                                   "start": datetime(2011, 5, 19, tzinfo=timezone.utc),
+                                                   "end": datetime(2011, 5, 20, tzinfo=timezone.utc),
+                                                   "resources": {"hours": 5, "minutes": 1}}])
+        serializer = AllocationUsageSerializer(allocation_usage)
+        data = serializer.data
+        a = serializer.is_valid()
         return serializer.save()
 
-    # TODO repair remove usage
+    # TODO repair remove usage, still not working
     def remove_usage_in_allocation_usages(self, allocation_name, start_date, end_date):
         db = self.get_db()
         allocations = self.find_allocation_usages_by_name(allocation_name)
