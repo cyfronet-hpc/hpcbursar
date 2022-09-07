@@ -6,10 +6,76 @@
 from django.test import TestCase
 from grantstorage.storage.mongo.mongostorage import *
 from pymongo import MongoClient
-from datetime import datetime, timezone
+from datetime import datetime
 from grantstorage.localmodels.user import *
 from grantstorage.localmodels.group import *
 from grantstorage.localmodels.grant import *
+
+
+# single create and store
+def create_and_store_user(login, status):
+    user = User(login, status)
+    ms = MongoStorage()
+    ms.store_user(user)
+    return user, ms
+
+
+def create_and_store_group(name, status, members, leaders):
+    group = Group(name, status, members, leaders)
+    ms = MongoStorage()
+    ms.store_group(group)
+    return group, ms
+
+
+def create_and_store_grant(name, group, status, start, end, allocations):
+    grant = Grant(name, group, status, start, end, allocations)
+    ms = MongoStorage()
+    ms.store_grant(grant)
+    return grant, ms
+
+
+def create_and_store_allocation_usage(name, summary, usage):
+    allocation_usage = AllocationUsage(name, summary, usage)
+    ms = MongoStorage()
+    ms.store_allocation_usage(allocation_usage)
+    return allocation_usage, ms
+
+
+# many create and store
+def create_and_store_many_users(logins, statuses):
+    users = []
+    for i in range(len(logins)):
+        users.append(User(logins[i], statuses[i]))
+    ms = MongoStorage()
+    ms.store_users(users)
+    return users, ms
+
+
+def create_and_store_many_groups(names, statuses, members, leaders):
+    groups = []
+    for i in range(len(names)):
+        groups.append(Group(names[i], statuses[i], members[i], leaders[i]))
+    ms = MongoStorage()
+    ms.store_groups(groups)
+    return groups, ms
+
+
+def create_and_store_many_grants(names, groups, statuses, starts, ends, allocations):
+    grants = []
+    for i in range(len(names)):
+        grants.append(Grant(names[i], groups[i], statuses[i], starts[i], ends[i], allocations[i]))
+    ms = MongoStorage()
+    ms.store_grants(grants)
+    return grants, ms
+
+
+def create_and_store_many_allocation_usages(names, summaries, usages):
+    allocation_usages = []
+    for i in range(len(names)):
+        allocation_usages.append(AllocationUsage(names[i], summaries[i], usages[i]))
+    ms = MongoStorage()
+    ms.store_allocation_usages(allocation_usages)
+    return allocation_usages, ms
 
 
 class TestMongoStorageExpectedValues(TestCase):
@@ -32,33 +98,17 @@ class TestMongoStorageSingleStore(TestCase):
 
     def test_store_user(self):
         db = self.get_db()
-        # Create a new user
-        login = "test_user"
-        status = "ACTIVE"
-        user = User(login, status)
+        user, _ = create_and_store_user("test_user", "ACTIVE")
 
-        # Add user to the database
-        ms = MongoStorage()
-        ms.store_user(user)
-
-        result = db["user"].find_one({"login": login, "status": status})
+        result = db["user"].find_one({"login": user.login})
         self.assertEqual(result["login"], user.login)
         self.assertEqual(result["status"], user.status)
 
     def test_store_group(self):
         db = self.get_db()
-        # Create a new group
-        name = "test_name"
-        status = "ACCEPTED"
-        members = ["user1", "user2", "user3"]
-        leaders = ["user1", "user2"]
-        group = Group(name, status, members, leaders)
+        group, _ = create_and_store_group("test_name", "ACCEPTED", ["user1", "user2", "user3"], ["user1", "user2"])
 
-        # Add group to the database
-        ms = MongoStorage()
-        ms.store_group(group)
-
-        result = db["group"].find_one({"name": name, "status": status, "members": members, "leaders": leaders})
+        result = db["group"].find_one({"name": group.name})
         self.assertEqual(result["name"], group.name)
         self.assertEqual(result["status"], group.status)
         self.assertEqual(result["members"], group.members)
@@ -66,110 +116,140 @@ class TestMongoStorageSingleStore(TestCase):
 
     def test_store_grant(self):
         db = self.get_db()
-        # Create a new grant
-        name = "test_grant"
-        group = "test_group"
-        status = "grant_active"
-        start = "2021-05-08"
-        end = "2022-05-10"
-        allocations = Allocation("test_allocation", "CPU", {"timelimit": 72, "hours": 10000000})
-        grant = Grant(name, group, status, start, end, [allocations])
+        allocation = [Allocation("test_allocation", "CPU", {"timelimit": 72, "hours": 10000000})]
+        grant, _ = create_and_store_grant("test_grant", "test_group", "ACTIVE", "2021-05-08", "2022-05-10", allocation)
 
-        # Add grant to the database
-        ms = MongoStorage()
-        ms.store_grant(grant)
-
-        result = db["grant"].find_one(
-            {"name": name, "group": group, "status": status, "start": start, "end": end})
+        result = db["grant"].find_one({"name": grant.name})
         self.assertEqual(result["name"], grant.name)
         self.assertEqual(result["group"], grant.group)
         self.assertEqual(result["status"], grant.status)
         self.assertEqual(result["start"], grant.start)
         self.assertEqual(result["end"], grant.end)
-        self.assertEqual(result["allocations"][0]["name"], grant.allocations[0].name)
-        self.assertEqual(result["allocations"][0]["resource"], grant.allocations[0].resource)
-        self.assertEqual(result["allocations"][0]["parameters"], grant.allocations[0].parameters)
+        for i in range(len(result["allocations"])):
+            self.assertEqual(result["allocations"][i]["name"], grant.allocations[i].name)
+            self.assertEqual(result["allocations"][i]["resource"], grant.allocations[i].resource)
+            self.assertEqual(result["allocations"][i]["parameters"], grant.allocations[i].parameters)
 
     def test_store_allocation_usage(self):
         db = self.get_db()
-        # Create new allocation usage
-        name = "test_name"
         summary = Summary(datetime(2020, 5, 17), {"hours": 4, "minutes": 5})
-        usage = Usage(datetime(2020, 5, 17), datetime(2020, 5, 15), datetime(2020, 5, 16), {"hours": 15, "minutes": 6})
-        allocation_usage = AllocationUsage(name, summary, [usage])
+        usage = [Usage(datetime(2020, 5, 17), datetime(2020, 5, 15), datetime(2020, 5, 16), {"hours": 3, "minutes": 6})]
+        allocation_usage, _ = create_and_store_allocation_usage("test_name", summary, usage)
 
-        # Add allocation_usage to the database
-        ms = MongoStorage()
-        ms.store_allocation_usage(allocation_usage)
-
-        result = db["allocation_usages"].find_one({"name": name})
+        result = db["allocation_usages"].find_one({"name": allocation_usage.name})
         self.assertEqual(result["name"], allocation_usage.name)
-        self.assertEqual(datetime.fromisoformat(result["summary"]["last_update"][:-1]),
-                         allocation_usage.summary.last_update)
+        self.assertEqual(result["summary"]["last_update"],
+                         allocation_usage.summary.last_update.astimezone().isoformat())
         self.assertEqual(result["summary"]["resources"], allocation_usage.summary.resources)
-        self.assertEqual(datetime.fromisoformat(result["usage"][0]["timestamp"][:-1]),
-                         allocation_usage.usage[0].timestamp)
-        self.assertEqual(datetime.fromisoformat(result["usage"][0]["start"][:-1]), allocation_usage.usage[0].start)
-        self.assertEqual(datetime.fromisoformat(result["usage"][0]["end"][:-1]), allocation_usage.usage[0].end)
-        self.assertEqual(result["usage"][0]["resources"], allocation_usage.usage[0].resources)
+        for i in range(len(result["usage"])):
+            self.assertEqual(result["usage"][i]["timestamp"],
+                             allocation_usage.usage[i].timestamp.astimezone().isoformat())
+            self.assertEqual(result["usage"][i]["start"], allocation_usage.usage[i].start.astimezone().isoformat())
+            self.assertEqual(result["usage"][i]["end"], allocation_usage.usage[i].end.astimezone().isoformat())
+            self.assertEqual(result["usage"][i]["resources"], allocation_usage.usage[i].resources)
 
 
+class TestMongoStorageManyStores(TestCase):
+    def get_db(self):
+        mc = MongoClient('mongodb://localhost/hpcbursar')
+        return mc['hpcbursar']
+
+    def test_store_many_users(self):
+        db = self.get_db()
+        logins = ["user1", "user2"]
+        statuses = ["ACTIVE", "INACTIVE"]
+        users, _ = create_and_store_many_users(logins, statuses)
+        for i in range(len(users)):
+            result = db["user"].find_one({"login": users[i].login})
+            self.assertEqual(result["login"], users[i].login)
+            self.assertEqual(result["status"], users[i].status)
+
+    def test_store_many_groups(self):
+        db = self.get_db()
+        names = ["group1", "group2"]
+        statuses = ["ACCEPTED", "PENDING"]
+        members = [["user1", "user2"], ["user2", "user3", "user4"]]
+        leaders = [["user1"], ["user3", "user5"]]
+        groups, _ = create_and_store_many_groups(names, statuses, members, leaders)
+        for i in range(len(groups)):
+            result = db["group"].find_one({"name": groups[i].name})
+            self.assertEqual(result["name"], groups[i].name)
+            self.assertEqual(result["status"], groups[i].status)
+            self.assertEqual(result["members"], groups[i].members)
+            self.assertEqual(result["leaders"], groups[i].leaders)
+
+    def test_store_many_grants(self):
+        db = self.get_db()
+        names = ["grant1", "grant2"]
+        groups = ["group1", "group2"]
+        statuses = ["ACTIVE", "ACTIVE"]
+        starts = ["2022-07-19", "2019-01-07"]
+        ends = ["2022-09-19", "2020-01-07"]
+        allocations = [[Allocation("allocation1", "CPU", {"timelimit": 12, "hours": 24})],
+                       [Allocation("allocation2", "GPU", {"timelimit": 100, "hours": 500})]]
+        grants, _ = create_and_store_many_grants(names, groups, statuses, starts, ends, allocations)
+        for i in range(len(grants)):
+            result = db["grant"].find_one({"name": grants[i].name})
+            self.assertEqual(result["name"], grants[i].name)
+            self.assertEqual(result["group"], grants[i].group)
+            self.assertEqual(result["status"], grants[i].status)
+            self.assertEqual(result["start"], grants[i].start)
+            self.assertEqual(result["end"], grants[i].end)
+            for j in range(len(result["allocations"])):
+                self.assertEqual(result["allocations"][j]["name"], grants[i].allocations[j].name)
+                self.assertEqual(result["allocations"][j]["resource"], grants[i].allocations[j].resource)
+                self.assertEqual(result["allocations"][j]["parameters"], grants[i].allocations[j].parameters)
+
+    # not finished yet
+    def test_store_many_allocation_usages(self):
+        db = self.get_db()
+        names = ["name1", "name2"]
+        summaries = [Summary(datetime(), ), Summary(datetime(), )]
+        usages = [[Usage(datetime(), datetime(), datetime())],
+                  [Usage(datetime(), datetime(), datetime())]]
+        allocation_usages, _ = create_and_store_many_allocation_usages(names, summaries, usages)
+
+        for i in range(len(allocation_usages)):
+            result = db["allocation_usages"].find_one({"name": allocation_usages[i].name})
+            self.assertEqual(result["name"], )
+            self.assertEqual(result["summary"]["last_update"], )
+            self.assertEqual(result["summary"]["resources"], )
+
+
+# TODO Check from here below
 class TestMongoStorageSingleFind(TestCase):
     def test_find_user_by_login(self):
-        # Create a new user
-        login = "test_user"
-        status = "ACTIVE"
-        user = User(login, status)
+        user, ms = create_and_store_user("test_user", "ACTIVE")
 
-        # Add user to the database
-        ms = MongoStorage()
-        ms.store_user(user)
-
-        result = ms.find_user_by_login(login)
+        result = ms.find_user_by_login(user.login)
         self.assertEqual(result.login, user.login)
         self.assertEqual(result.status, user.status)
 
     def test_find_group_by_name(self):
-        # Create a new group
-        name = "test_name"
-        status = "ACCEPTED"
-        members = ["user1", "user2", "user3"]
-        leaders = ["test_user", "user1"]
-        group = Group(name, status, members, leaders)
+        group, ms = create_and_store_group("test_name", "ACCEPTED", ["user1", "user2", "user3"], ["test_user", "user1"])
 
-        # Add group to the database
-        ms = MongoStorage()
-        ms.store_group(group)
-
-        result = ms.find_group_by_name(name)
+        result = ms.find_group_by_name(group.name)
         self.assertEqual(result.name, group.name)
         self.assertEqual(result.status, group.status)
         self.assertEqual(result.members, group.members)
         self.assertEqual(result.leaders, group.leaders)
 
     def test_find_grant_by_name(self):
-        # Create a new grant
-        name = "test_grant"
-        group = "test_group"
-        status = "grant_active"
-        start = "2021-05-08"
-        end = "2022-05-07"
-        allocations = Allocation("test_allocation", "CPU", {"timelimit": 72, "hours": 10000000})
-        grant = Grant(name, group, status, start, end, [allocations])
-
-        # Add grant to the database
-        ms = MongoStorage()
-        ms.store_grant(grant)
-
-        result = ms.find_grant_by_name(name)
-        self.assertEqual(result.name, grant.name)
-        self.assertEqual(result.group, grant.group)
-        self.assertEqual(result.status, grant.status)
-        self.assertEqual(str(result.start), grant.start)
-        self.assertEqual(str(result.end), grant.end)
-        self.assertEqual(result.allocations[0].name, grant.allocations[0].name)
-        self.assertEqual(result.allocations[0].resource, grant.allocations[0].resource)
-        self.assertEqual(result.allocations[0].parameters, grant.allocations[0].parameters)
+        pass
+        # usage = Usage(<)
+        # allocations = Allocation("test_allocation", "CPU", {"timelimit": 72, "hours": 10000000})
+        # grant, ms = create_and_store_allocation_usage("test_grant", "test_group", "ACTIVE", "2021-05-08", "2022-05-07",
+        #                                               allocations)
+        #
+        # result = ms.find_grant_by_name(grant.name)
+        # self.assertEqual(result.name, grant.name)
+        # self.assertEqual(result.group, grant.group)
+        # self.assertEqual(result.status, grant.status)
+        # self.assertEqual(str(result.start), grant.start)
+        # self.assertEqual(str(result.end), grant.end)
+        # self.assertEqual(result.allocations[0].name, grant.allocations[0].name)
+        # self.assertEqual(result.allocations[0].resource, grant.allocations[0].resource)
+        # self.assertEqual(result.allocations[0].parameters, grant.allocations[0].parameters)
 
 
 class TestMongoStorageSpecificFinds(TestCase):
