@@ -1,5 +1,6 @@
 # Copyright 2022 ACC Cyfronet AGH-UST
 
+
 # Licensed under the Apache License, Version 2.0,
 # copy of the license is available in the LICENSE file;
 
@@ -111,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Warsaw'
 
 USE_I18N = True
 
