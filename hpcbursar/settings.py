@@ -171,4 +171,3 @@ PARTITION_ALLOCATION_MAP = {
 }
 # overwriting settings with default ones
 from hpcbursar.local_settings import *
-
