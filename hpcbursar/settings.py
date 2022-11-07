@@ -134,7 +134,7 @@ EC_PRIVKEY_LOCATION = '/home/yaq/.globus/ecdsa-p521-private.pem'
 
 
 PLGRID_PORTAL_URL = 'https://portal.plgrid.pl/'
-PLGRID_SITE_NAME = 'CYFRONET-ARES'
+PLGRID_SITE_NAMES = ['CYFRONET-ARES']
 
 PLG_LOGIN_PREFIX = 'plg'
 PLG_ACCOUNT_PREFIX = 'plg'

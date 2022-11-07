@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from grantstorage.integration.portalclient.v1 import PortalClient
+from grantstorage.integration.portalclient.v2 import PortalClient
 from django.conf import settings
 from grantstorage.localmodels.user import User
 from grantstorage.localmodels.group import Group
@@ -14,9 +14,11 @@ class Command(BaseCommand):
     def setup(self):
         self.pc = PortalClient(
             settings.PLGRID_PORTAL_URL,
-            settings.PLGRID_SITE_NAME,
+            settings.PLGRID_SITE_NAMES,
             settings.GRID_KEY_LOCATION,
-            settings.GRID_CERTIFICATE_LOCATION
+            settings.GRID_CERTIFICATE_LOCATION,
+            settings.EC_PRIVKEY_LOCATION,
+            settings.EC_PUBKEY_LOCATION,
         )
 
     def convert_recources_to_local(self, resource_type, portal_parameters):

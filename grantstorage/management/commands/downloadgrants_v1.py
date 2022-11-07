@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def setup(self):
         self.pc = PortalClient(
             settings.PLGRID_PORTAL_URL,
-            settings.PLGRID_SITE_NAME,
+            settings.PLGRID_SITE_NAMES[0],
             settings.GRID_KEY_LOCATION,
             settings.GRID_CERTIFICATE_LOCATION
         )
