@@ -1,6 +1,11 @@
-import requests
+import json
 
-API_URL_BASE = 'api/v1.0/'
+import requests
+import jwt
+import datetime
+
+API_V1_URL_BASE = 'api/v1.0/'
+API_V2_URL_BASE = 'api/sites/'
 
 
 class PortalException(Exception):
@@ -8,23 +13,58 @@ class PortalException(Exception):
 
 
 class PortalClient(object):
-    def __init__(self, portal_url, site_name, key_path, cert_path):
-        self.grant_url = portal_url + API_URL_BASE + 'grant?site=' + site_name
-        self.group_url = portal_url + API_URL_BASE + 'group?site=' + site_name
-        self.user_url = portal_url + API_URL_BASE + 'user?site=' + site_name
+    def __init__(self, portal_v1_url, portal_v2_url, site_names, key_path, cert_path, ecprivkey_path):
+        self.group_url = portal_v1_url + API_V1_URL_BASE + 'group?site='
+        self.user_url = portal_v1_url + API_V1_URL_BASE + 'user?site='
 
+        self.grant_url = portal_v2_url + API_V2_URL_BASE + '%s' +'/allocations'
+
+        self.site_names = site_names
         self.key_path = key_path
         self.cert_path = cert_path
+        self.ecprivkey_path = ecprivkey_path
 
-    def portal_request(self, url):
+    def portal_v1_request(self, url):
         response = requests.get(url, cert=(self.cert_path, self.key_path))
         return response.json()
 
-    def download_grants(self):
-        return self.portal_request(self.grant_url)
+    def portal_v2_request(self, url, token):
+        headers={'Authorization': 'Bearer %s' % token}
+        response = requests.get(url, headers=headers)
+        return response.json()
+
+    def download_allocations(self):
+        with open(self.ecprivkey_path, 'rb') as f:
+            private_key = f.read()
+
+        results = []
+        for site in self.site_names:
+            date_future = (datetime.datetime.now() + datetime.timedelta(minutes=10)).strftime('%s')
+            encoded = jwt.encode({'name': site, 'exp': date_future}, private_key, algorithm='ES512')
+            results += [self.portal_v2_request(self.grant_url % site, encoded)]
+        return results
 
     def download_groups(self):
-        return self.portal_request(self.group_url)
+        results = []
+        for site in self.site_names:
+            results += [self.portal_v1_request(self.group_url + site)]
+        return results
 
     def download_users(self):
-        return self.portal_request(self.user_url)
+        results = []
+        for site in self.site_names:
+            results += [self.portal_v1_request(self.user_url + site)]
+        return results
+
+
+if __name__ == '__main__':
+    pc = PortalClient(
+        'https://portal.plgrid.pl/',
+        'https://grants.pre.plgrid.pl/',
+        ['CYFRONET-ARES'],
+        '/home/yaq/.globus/userkey-insec.pem',
+        '/home/yaq/.globus/usercert.pem',
+        '/home/yaq/.globus/ecdsa-p521-private.pem'
+    )
+
+    print(json.dumps(pc.download_allocations()))

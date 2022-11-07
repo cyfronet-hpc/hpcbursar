@@ -129,11 +129,11 @@ GRID_CERTIFICATE_LOCATION = '/home/yaq/.globus/usercert.pem'
 GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
 
 #required for portalclient/v2
-EC_PUBKEY_LOCATION = '/home/yaq/.globus/ecdsa-p521-public.pem'
 EC_PRIVKEY_LOCATION = '/home/yaq/.globus/ecdsa-p521-private.pem'
 
 
-PLGRID_PORTAL_URL = 'https://portal.plgrid.pl/'
+PLGRID_PORTAL_V1_URL = 'https://portal.plgrid.pl/'
+PLGRID_PORTAL_V2_URL = 'https://grants.pre.plgrid.pl/'
 PLGRID_SITE_NAMES = ['CYFRONET-ARES']
 
 PLG_LOGIN_PREFIX = 'plg'

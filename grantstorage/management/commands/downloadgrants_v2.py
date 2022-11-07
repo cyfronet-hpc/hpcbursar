@@ -13,12 +13,12 @@ class Command(BaseCommand):
 
     def setup(self):
         self.pc = PortalClient(
-            settings.PLGRID_PORTAL_URL,
+            settings.PLGRID_PORTAL_V1_URL,
+            settings.PLGRID_PORTAL_V2_URL,
             settings.PLGRID_SITE_NAMES,
             settings.GRID_KEY_LOCATION,
             settings.GRID_CERTIFICATE_LOCATION,
             settings.EC_PRIVKEY_LOCATION,
-            settings.EC_PUBKEY_LOCATION,
         )
 
     def convert_recources_to_local(self, resource_type, portal_parameters):
@@ -68,40 +68,43 @@ class Command(BaseCommand):
                 pass
         return grants
 
-    def convert_users_to_localmodels(self, portal_users):
-        users = []
-        for portal_user in portal_users:
-            login = portal_user['login']
-            status = portal_user['status']
-            user = User(login=login, status=status)
-            users += [user]
-        return users
+    def convert_users_to_localmodels(self, portal_user_list):
+        users = {}
+        for portal_users in portal_user_list:
+            for portal_user in portal_users:
+                login = portal_user['login']
+                status = portal_user['status']
+                user = User(login=login, status=status)
+                users[login] = user
+        return users.values()
 
-    def convert_groups_to_localmodels(self, portal_groups):
-        groups = []
-        for portal_group in portal_groups:
-            name = portal_group['teamId']
-            status = portal_group['status']
-            members = portal_group['teamMembers']
-            leaders = portal_group['teamLeaders']
-            group = Group(name=name, status=status, members=members, leaders=leaders)
-            groups += [group]
-        return groups
+    def convert_groups_to_localmodels(self, portal_group_list):
+        groups = {}
+        for portal_groups in portal_group_list:
+            for portal_group in portal_groups:
+                name = portal_group['teamId']
+                status = portal_group['status']
+                members = portal_group['teamMembers']
+                leaders = portal_group['teamLeaders']
+                group = Group(name=name, status=status, members=members, leaders=leaders)
+                groups[name] = group
+        return groups.values()
 
     def handle(self, *args, **options):
         self.setup()
 
-        portal_grants = self.pc.download_grants()
+        # portal_grants = self.pc.download_grants()
         portal_groups = self.pc.download_groups()
         portal_users = self.pc.download_users()
 
-        grants = self.convert_grants_to_localmodel(portal_grants)
+        # grants = self.convert_grants_to_localmodel(portal_grants)
         groups = self.convert_groups_to_localmodels(portal_groups)
         users = self.convert_users_to_localmodels(portal_users)
 
-        print('done downloading: grants: ' + str(len(grants)) + ', groups: ' + str(len(groups)) + ', users: ' + str(len(users)))
+        print('done downloading: grants: ' + ', groups: ' + str(len(groups)) + ', users: ' + str(len(users)))
+        # print('done downloading: grants: ' + str(len(grants)) + ', groups: ' + str(len(groups)) + ', users: ' + str(len(users)))
         ms = MongoStorage()
         ms.store_users(users)
         ms.store_groups(groups)
-        ms.store_grants(grants)
+        # ms.store_grants(grants)
         print('done stores')
