@@ -1,10 +1,9 @@
-from django.core.management.base import BaseCommand, CommandError
-from grantstorage.integration.portalclient import PortalClient
+from django.core.management.base import BaseCommand
+from grantstorage.integration.portalclient.v1 import PortalClient
 from django.conf import settings
-import json
-from grantstorage.localmodels.user import User, UserSerializer
-from grantstorage.localmodels.group import Group, GroupSerializer
-from grantstorage.localmodels.grant import Grant, Allocation, GrantSerializer
+from grantstorage.localmodels.user import User
+from grantstorage.localmodels.group import Group
+from grantstorage.localmodels.grant import Grant, Allocation
 from grantstorage.storage.mongo.mongostorage import MongoStorage
 import datetime
 

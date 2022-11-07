@@ -124,8 +124,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'slurm01.ares.cyfronet.pl']
 
+#required for portalclient/v1 and v2
 GRID_CERTIFICATE_LOCATION = '/home/yaq/.globus/usercert.pem'
 GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
+
+#required for portalclient/v2
+EC_PUBKEY_LOCATION = '/home/yaq/.globus/ecdsa-p521-public.pem'
+EC_PRIVKEY_LOCATION = '/home/yaq/.globus/ecdsa-p521-private.pem'
+
 
 PLGRID_PORTAL_URL = 'https://portal.plgrid.pl/'
 PLGRID_SITE_NAME = 'CYFRONET-ARES'
