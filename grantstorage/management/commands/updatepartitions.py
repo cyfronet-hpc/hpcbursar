@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
     def is_grant_active(self, grant):
         end = grant.end + datetime.timedelta(days=1)
-        if end > datetime.datetime.now().date() and grant.start < datetime.datetime.now().date() and 'grant_active' in grant.status:
+        if end > datetime.datetime.now().date() and grant.start < datetime.datetime.now().date() and 'accepted' in grant.status:
             return True
         else:
             return False
