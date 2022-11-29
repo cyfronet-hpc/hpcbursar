@@ -124,13 +124,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'slurm01.ares.cyfronet.pl']
 
-#required for portalclient/v1 and v2
+# required for portalclient/v1 and v2
 GRID_CERTIFICATE_LOCATION = '/home/yaq/.globus/usercert.pem'
 GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
 
-#required for portalclient/v2
+# required for portalclient/v2
 EC_PRIVKEY_LOCATION = '/home/yaq/.globus/ecdsa-p521-private.pem'
-
 
 PLGRID_PORTAL_V1_URL = 'https://portal.plgrid.pl/'
 PLGRID_PORTAL_V2_URL = 'https://grants.pre.plgrid.pl/'
@@ -146,8 +145,8 @@ SLURM_SCONTROL_LOCATION = '/opt/slurm/releases/production/bin/scontrol'
 
 SLURM_SUPPORTED_RESOURCES = ['CPU', 'GPU']
 SLURM_RESOURCE_PARTITION_MAPPING = {
-    'CPU': 'plgrid',
-    'GPU': 'plgrid-gpu-v100'
+    'CPU': ['plgrid', 'plgrid-now', 'plgrid-testing'],
+    'GPU': ['plgrid-gpu-v100']
 }
 SLURM_ACL_PLACEHOLDER = 'hpcb'
 
