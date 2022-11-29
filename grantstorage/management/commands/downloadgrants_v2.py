@@ -24,12 +24,12 @@ class Command(BaseCommand):
         )
 
     def convert_recources_to_local(self, resource_type, portal_parameters):
-        resource_mapping = {"CPU": {
+        resource_mapping = {"cpu": {
             "time": "hours",
             "max-execution-time": "timelimit"
-        }, "GPU": {
+        }, "gpu": {
             "time": "hours",
-        }, "STORAGE": {
+        }, "storage": {
             "capacity": "capacity",
         }
         }
@@ -50,8 +50,8 @@ class Command(BaseCommand):
                 name = portal_allocation['name']
                 resource = portal_allocation['resource']
                 portal_parameters = portal_allocation['parameterValues']
-                if resource.startswith('STORAGE'):
-                    resource = 'STORAGE'
+                if resource.startswith('storage'):
+                    resource = 'storage'
                 parameters = self.convert_recources_to_local(resource, portal_parameters)
                 grant_name = portal_allocation['grantName']
                 allocation = Allocation(name=name, resource=resource, parameters=parameters)
@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 start = datetime.datetime.strptime(portal_grant['start'], DATE_FMT).date()
                 end = datetime.datetime.strptime(portal_grant['end'], DATE_FMT).date()
                 grant = Grant(name=name, group=group, status=status, start=start, end=end,
-                              allocations=grant_allocations[name])
+                              allocations=grant_allocations.get(name, []))
                 grants[name] = grant
                 # except:
                 #     pass
