@@ -144,9 +144,10 @@ SLURM_SACCTMGR_LOCATION = '/opt/slurm/releases/production/bin/sacctmgr'
 SLURM_SCONTROL_LOCATION = '/opt/slurm/releases/production/bin/scontrol'
 
 SLURM_SUPPORTED_RESOURCES = ['CPU', 'GPU']
-SLURM_RESOURCE_PARTITION_MAPPING = {
-    'CPU': ['plgrid', 'plgrid-now', 'plgrid-testing'],
-    'GPU': ['plgrid-gpu-v100']
+SLURM_PARTITION_MAPPING = {
+    lambda a: a.resource == 'CPU': ['plgrid', 'plgrid-now', 'plgrid-testing'],
+    lambda a: a.resource == 'CPU' and a.parameters.get('timelimit', 0) > 72: ['plgrid-long'],
+    lambda a: a.resource == 'GPU': ['plgrid-gpu-v100']
 }
 SLURM_ACL_PLACEHOLDER = 'hpcb'
 

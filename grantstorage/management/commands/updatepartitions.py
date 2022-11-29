@@ -30,19 +30,21 @@ class Command(BaseCommand):
         for grant in grants:
             grant.is_active = self.is_grant_active(grant)
 
-        resource_partition_mapping = settings.SLURM_RESOURCE_PARTITION_MAPPING
+        partition_mapping = settings.SLURM_PARTITION_MAPPING
         partition_account = {}
-        for partition_list in resource_partition_mapping.values():
-            for partition in partition_list:
-                partition_account[partition] = []
 
         for grant in grants:
             if grant.is_active:
                 for allocation in grant.allocations:
-                    if allocation.resource in resource_partition_mapping.keys():
-                        for partition in resource_partition_mapping[allocation.resource]:
-                            partition_account[partition] += [allocation.name]
+                    for cond, partitions in partition_mapping.items():
+                        if cond(allocation):
+                            for partition in partitions:
+                                if partition in partition_account.keys():
+                                    partition_account[partition] += [allocation.name]
+                                else:
+                                    partition_account[partition] = [allocation.name]
 
+        # print(json.dumps(partition_account, indent=2))
         for partition, accounts in partition_account.items():
             if not accounts:
                 pass
