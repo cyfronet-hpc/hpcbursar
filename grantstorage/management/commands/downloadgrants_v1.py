@@ -4,7 +4,8 @@
 # copy of the license is available in the LICENSE file;
 
 from django.core.management.base import BaseCommand
-from grantstorage.integration.portalclient import PortalClient
+from django.core.management.base import BaseCommand
+from grantstorage.integration.portalclient.v1 import PortalClient
 from django.conf import settings
 from grantstorage.localmodels.user import User
 from grantstorage.localmodels.group import Group
@@ -18,8 +19,8 @@ class Command(BaseCommand):
 
     def setup(self):
         self.pc = PortalClient(
-            settings.PLGRID_PORTAL_URL,
-            settings.PLGRID_SITE_NAME,
+            settings.PLGRID_PORTAL_V1_URL,
+            settings.PLGRID_SITE_NAMES[0],
             settings.GRID_KEY_LOCATION,
             settings.GRID_CERTIFICATE_LOCATION
         )

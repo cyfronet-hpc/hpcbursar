@@ -134,11 +134,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'slurm01.ares.cyfronet.pl']
 
-GRID_CERTIFICATE_LOCATION = 'path to your .pem file'
-GRID_KEY_LOCATION = 'path to your .key file'
 
-PLGRID_PORTAL_URL = 'https://portal.plgrid.pl/'
-PLGRID_SITE_NAME = 'CYFRONET-ARES'
+# required for portalclient/v1 and v2
+GRID_CERTIFICATE_LOCATION = '/home/yaq/.globus/usercert.pem'
+GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
+
+# required for portalclient/v2
+EC_PRIVKEY_LOCATION = '/home/yaq/.globus/ecdsa-p521-private.pem'
+
+PLGRID_PORTAL_V1_URL = 'https://portal.plgrid.pl/'
+PLGRID_PORTAL_V2_URL = 'https://grants.pre.plgrid.pl/'
+PLGRID_SITE_NAMES = ['CYFRONET-ARES', 'CYFRONET-HPC-STORAGE']
 
 PLG_LOGIN_PREFIX = 'plg'
 PLG_ACCOUNT_PREFIX = 'plg'
