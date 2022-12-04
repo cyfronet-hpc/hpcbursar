@@ -8,35 +8,16 @@ from django.conf import settings
 from datetime import datetime, timedelta
 
 
-def get_current_hour():
-    now = datetime.now().replace(minute=0, second=0, microsecond=0)
-    return now.strftime("%H:%M:%S")
-
-
-def get_last_hour():
-    now = datetime.now().replace(minute=0, second=0, microsecond=0)
-    hour_before = now - timedelta(hours=1)
-    return hour_before.strftime("%H:%M:%S")
-
-
 class SacctAllocationClient(object):
     def __init__(self):
         self.verbose = settings.SLURM_CLIENT_VERBOSE
         self.dryrun = False
-        self.sacctmgt_path = settings.SLURM_SACCTMGR_LOCATION
-
-    UNIT_FACTOR = {
-        "": 0.000000001,
-        "K": 0.000001,
-        "M": 0.001,
-        "G": 1,
-        "T": 1000
-    }
+        self.sacct_path = settings.SLURM_SACCT_LOCATION
 
     COLUMN_MAP = {}
 
     def execute(self, cmd, override=False):
-        cmd_full = [self.sacctmgt_path, "-iP"] + cmd
+        cmd_full = [self.sacct_path, "-P"] + cmd
         if self.verbose:
             print('Executing command: %s' % str(cmd_full))
         if not self.dryrun or override:
@@ -44,13 +25,20 @@ class SacctAllocationClient(object):
             return cp.returncode, cp.stdout, cp.stderr
         return 0, "", ""
 
-    def sacct_command(self, start=get_last_hour(), end=get_current_hour()):
-        command = f"sacct -D -P -X -s 'BF,CA,CD,F,NF,OOM,PR,TO,DL,RQ' -S{start} -E{end} --format JobID,User,Group,Account,ReservationId,Partition,Submit,Start,End,NodeList,CPUTimeRAW,ElapsedRaw,MaxRSS,ExitCode,NCPUS,ReqTRES"
-        command = command.split()
+    def sacct_command(self, start, end):
+        command = [
+            'sacct', '-D', '-P', '-X',
+            '-s', 'BF,CA,CD,F,NF,OOM,PR,TO,DL,RQ',
+            '-S', start,
+            '-E', end,
+            '--noconvert',
+            '--format',
+            'JobID,User,Group,Account,ReservationId,Partition,Submit,Start,End,NodeList,CPUTimeRAW,ElapsedRaw,MaxRSS,ExitCode,NCPUS,AllocTres'
+        ]
         return_code, output, stderr = self.execute(command)
-        if stderr:
-            raise Exception("Cannot run a command.\n")
-        output = output.split()
+        for line in output.split('\n'):
+            pass
+
         cost = 0
         for i in range(1, len(output)):
             split_alloc = output[i].split("|")
@@ -91,7 +79,7 @@ class SacctAllocationClient(object):
                 cpu = int(cpu_values[-1])
             elif rt.find("mem") != -1:
                 memory_values = rt.split("=")
-                memory = self.convert_to_megabytes(memory_values[-1])
+                # memory = self.convert_to_megabytes(memory_values[-1])
         allocation_type = settings.PARTITION_ALLOCATION_MAP[self.COLUMN_MAP["Partition"]]
         args = {"gpu": gpu,
                 "cpu": cpu,
@@ -113,11 +101,3 @@ class SacctAllocationClient(object):
         "CPU": calculate_cpu_price,
         "CPU_BIG_MEM": calculate_cpu_big_mem_price
     }
-
-    def convert_to_megabytes(self, memory_allocation):
-        unit = memory_allocation[-1]
-        if '0' <= unit <= "9":
-            unit = ""
-        factor = self.UNIT_FACTOR[unit]
-        memory_allocation = int(memory_allocation[:-1])
-        return memory_allocation * factor

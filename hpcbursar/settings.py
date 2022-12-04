@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ.get('SECRET_KEY', "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -161,14 +161,16 @@ SLURM_PARTITION_MAPPING = {
 }
 SLURM_ACL_PLACEHOLDER = 'hpcb'
 
-PER_ALLOCATION = {
-    "MEM_PER_GPU": 384 / 8,
-    "CPU_PER_GPU": 36 / 8,
-    "MEM_PER_CPU": 192 / 48,
-    "MEM_PER_CPU_BIG_MEM": 384 / 48
+PARTITION_BILLING = {
+    ('plgrid-gpu-v100'):
+        {'billed_resource': 'gpu', 'mem': 46000, 'cpu': 4},
+    ('plgrid', 'plgrid-testing', 'plgrid-now'):
+        {'billed_resource': 'cpu', 'mem': 3850},
+    ('plgrid-bigmem'):
+        {'billed_resource': 'cpu', 'mem': 7700}
 }
 
 SLURM_ADMIN_USER = 'yaq'
 
 # overwriting settings with default ones
-from hpcbursar.local_settings import *
+# from hpcbursar.local_settings import *
