@@ -134,7 +134,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'slurm01.ares.cyfronet.pl']
 
-
 # required for portalclient/v1 and v2
 GRID_CERTIFICATE_LOCATION = '/home/yaq/.globus/usercert.pem'
 GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
@@ -155,13 +154,12 @@ SLURM_SACCTMGR_LOCATION = '/opt/slurm/releases/production/bin/sacctmgr'
 SLURM_SCONTROL_LOCATION = '/opt/slurm/releases/production/bin/scontrol'
 
 SLURM_SUPPORTED_RESOURCES = ['CPU', 'GPU']
-SLURM_RESOURCE_PARTITION_MAPPING = {
-    'CPU': 'plgrid',
-    'GPU': 'plgrid-gpu-v100'
+SLURM_PARTITION_MAPPING = {
+    lambda a: a.resource == 'CPU': ['plgrid', 'plgrid-now', 'plgrid-testing'],
+    lambda a: a.resource == 'CPU' and a.parameters.get('timelimit', 0) > 72: ['plgrid-long'],
+    lambda a: a.resource == 'GPU': ['plgrid-gpu-v100']
 }
 SLURM_ACL_PLACEHOLDER = 'hpcb'
-
-SLURM_ADMIN_USER = 'admin user'
 
 PER_ALLOCATION = {
     "MEM_PER_GPU": 384 / 8,
@@ -170,11 +168,7 @@ PER_ALLOCATION = {
     "MEM_PER_CPU_BIG_MEM": 384 / 48
 }
 
-PARTITION_ALLOCATION_MAP = {
-    "plgrid-gpu-v100": "GPU",
-    "plgrid": "CPU",
-    "plgrid-long": "CPU",
-    "plgrid-bigmem": "CPU_BIG_MEM"
-}
+SLURM_ADMIN_USER = 'yaq'
+
 # overwriting settings with default ones
 from hpcbursar.local_settings import *
