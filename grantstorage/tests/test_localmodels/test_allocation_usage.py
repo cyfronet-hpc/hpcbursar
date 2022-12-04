@@ -4,7 +4,7 @@
 # copy of the license is available in the LICENSE file;
 
 from django.test import TestCase
-from grantstorage.localmodels.allocation_usage import *
+from grantstorage.localmodels.allocationusage import *
 from datetime import datetime
 from collections import OrderedDict
 

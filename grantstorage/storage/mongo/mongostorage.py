@@ -7,7 +7,7 @@ from pymongo import MongoClient
 from grantstorage.localmodels.user import User, UserSerializer
 from grantstorage.localmodels.group import Group, GroupSerializer
 from grantstorage.localmodels.grant import Grant, GrantSerializer
-from grantstorage.localmodels.allocation_usage import *
+from grantstorage.localmodels.allocationusage import *
 from datetime import datetime, timezone
 
 MODEL_TYPE_TO_COLLECTION = {
@@ -140,7 +140,7 @@ class MongoStorage(object):
     def find_grants_by_group(self, group):
         return self.find_by_filter_template(Grant, {'group': group})
 
-    def find_allocation_usages_by_name(self, name):
+    def find_allocation_usage_by_name(self, name):
         return self.find_by_filter_template(AllocationUsage, {"name": name})
 
     def find_allocations_by_group(self, group):
@@ -151,48 +151,48 @@ class MongoStorage(object):
         return allocations
 
     # TODO repair update usage, still not working
-    def update_usage_in_allocation_usages(self, allocation_name, data):
-        db = self.get_db()
-        allocations = self.find_allocation_usages_by_name(allocation_name)
-        if not allocations:
-            raise Exception("Wrong name")
-        if len(allocations) == 0:
-            return None
-        allocation = allocations[0]
-        db["allocation_usages"].update_one({"name": allocation_name}, {"$push": {"usage": data}})
-        # problem here
-        allocation_usage = AllocationUsage(name="update_test_name",
-                                           summary={"last_update": datetime(2011, 5, 20, tzinfo=timezone.utc),
-                                                    "resources": {"hours": 20, "minutes": 3}},
-                                           usage=[{"timestamp": datetime(2011, 5, 10, tzinfo=timezone.utc),
-                                                   "start": datetime(2011, 5, 8, tzinfo=timezone.utc),
-                                                   "end": datetime(2011, 5, 10, tzinfo=timezone.utc),
-                                                   "resources": {"hours": 15, "minutes": 2}},
-                                                  {"timestamp": datetime(2011, 5, 20, tzinfo=timezone.utc),
-                                                   "start": datetime(2011, 5, 19, tzinfo=timezone.utc),
-                                                   "end": datetime(2011, 5, 20, tzinfo=timezone.utc),
-                                                   "resources": {"hours": 5, "minutes": 1}}])
-        serializer = AllocationUsageSerializer(allocation_usage)
-        data = serializer.data
-        a = serializer.is_valid()
-        return serializer.save()
-
-    # TODO repair remove usage, still not working
-    def remove_usage_in_allocation_usages(self, allocation_name, start_date, end_date):
-        db = self.get_db()
-        allocations = self.find_allocation_usages_by_name(allocation_name)
-        if not allocations:
-            raise Exception("Wrong name")
-        for alloc in allocations:
-            usage = alloc.usage
-            summary = alloc.summary
-            for u in usage:
-                if u.start > start_date and u.end < end_date:
-                    usage.remove(u)
-                    a = summary["resources"]
-                    print(a)
-            # db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"usage":}})
-            # db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"summary":}})
-        serializer = MODEL_TYPE_TO_SERIALIZER[AllocationUsage](data=allocations, many=True)
-        serializer.is_valid()
-        return serializer.save()
+    # def update_usage_in_allocation_usages(self, allocation_name, data):
+    #     db = self.get_db()
+    #     allocations = self.find_allocation_usages_by_name(allocation_name)
+    #     if not allocations:
+    #         raise Exception("Wrong name")
+    #     if len(allocations) == 0:
+    #         return None
+    #     allocation = allocations[0]
+    #     db["allocation_usages"].update_one({"name": allocation_name}, {"$push": {"usage": data}})
+    #     # problem here
+    #     allocation_usage = AllocationUsage(name="update_test_name",
+    #                                        summary={"last_update": datetime(2011, 5, 20, tzinfo=timezone.utc),
+    #                                                 "resources": {"hours": 20, "minutes": 3}},
+    #                                        usage=[{"timestamp": datetime(2011, 5, 10, tzinfo=timezone.utc),
+    #                                                "start": datetime(2011, 5, 8, tzinfo=timezone.utc),
+    #                                                "end": datetime(2011, 5, 10, tzinfo=timezone.utc),
+    #                                                "resources": {"hours": 15, "minutes": 2}},
+    #                                               {"timestamp": datetime(2011, 5, 20, tzinfo=timezone.utc),
+    #                                                "start": datetime(2011, 5, 19, tzinfo=timezone.utc),
+    #                                                "end": datetime(2011, 5, 20, tzinfo=timezone.utc),
+    #                                                "resources": {"hours": 5, "minutes": 1}}])
+    #     serializer = AllocationUsageSerializer(allocation_usage)
+    #     data = serializer.data
+    #     a = serializer.is_valid()
+    #     return serializer.save()
+    #
+    # # TODO repair remove usage, still not working
+    # def remove_usage_in_allocation_usages(self, allocation_name, start_date, end_date):
+    #     db = self.get_db()
+    #     allocations = self.find_allocation_usages_by_name(allocation_name)
+    #     if not allocations:
+    #         raise Exception("Wrong name")
+    #     for alloc in allocations:
+    #         usage = alloc.usage
+    #         summary = alloc.summary
+    #         for u in usage:
+    #             if u.start > start_date and u.end < end_date:
+    #                 usage.remove(u)
+    #                 a = summary["resources"]
+    #                 print(a)
+    #         # db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"usage":}})
+    #         # db["allocation_usages"].update_one({"name": allocation_name}, {"$set": {"summary":}})
+    #     serializer = MODEL_TYPE_TO_SERIALIZER[AllocationUsage](data=allocations, many=True)
+    #     serializer.is_valid()
+    #     return serializer.save()

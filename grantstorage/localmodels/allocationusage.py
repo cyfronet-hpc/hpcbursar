@@ -13,7 +13,7 @@ class Summary(object):
         self.resources = resources
 
     def __repr__(self):
-        return f"SUMMARY: last update: {self.last_update}, summary: {self.resources}"
+        return f"Summary: last update: {self.last_update}, summary: {self.resources}"
 
 
 class SummarySerializer(serializers.Serializer):
@@ -59,37 +59,37 @@ class UsageSerializer(serializers.Serializer):
 
 
 class AllocationUsage(object):
-    def __init__(self, name, summary, usage):
+    def __init__(self, name, summary, usages):
         self.name = name
         self.summary = summary
-        self.usage = usage
+        self.usages = usages
 
     def __repr__(self):
-        return f"ALLOCATION USAGE: name: {self.name}, summary: {self.summary}, usage: {self.usage}"
+        return f"AllocationUsage: name: {self.name}, summary: {self.summary}, usage: {self.usages}"
 
 
 class AllocationUsageSerializer(serializers.Serializer):
     name = serializers.CharField()
     summary = SummarySerializer()
-    usage = serializers.ListField(child=UsageSerializer())
+    usages = serializers.ListField(child=UsageSerializer())
 
     def create(self, validated_data):
-        usage = []
-        for u_data in validated_data["usage"]:
+        usages = []
+        for u_data in validated_data["usages"]:
             u = Usage(**u_data)
-            usage.append(u)
-        validated_data.update({"usage": usage})
+            usages.append(u)
+        validated_data.update({"usages": usages})
         return AllocationUsage(**validated_data)
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get("name", instance.name)
         instance.summary = validated_data.get("summary", instance.summary)
 
-        usage = []
-        for u_data in validated_data["usage"]:
+        usages = []
+        for u_data in validated_data["usages"]:
             u = Usage(**u_data)
-            usage.append(u)
-        validated_data.update({"usage": usage})
+            usages.append(u)
+        validated_data.update({"usages": usages})
 
-        instance.usage = validated_data.get("usage", instance.usage)
+        instance.usages = validated_data.get("usages", instance.usages)
         return instance

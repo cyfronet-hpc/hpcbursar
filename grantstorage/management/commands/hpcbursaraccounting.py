@@ -5,7 +5,7 @@
 
 from django.core.management.base import BaseCommand
 from grantstorage.storage.mongo.mongostorage import MongoStorage
-from grantstorage.integration.sacctallocationintegration import SacctAllocationClient
+from grantstorage.integration.sacctintegration import SacctAllocationClient
 
 
 class Command(BaseCommand):

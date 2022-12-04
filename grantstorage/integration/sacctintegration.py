@@ -5,7 +5,6 @@
 
 import subprocess
 from django.conf import settings
-from hpcbursar import settings
 from datetime import datetime, timedelta
 
 
