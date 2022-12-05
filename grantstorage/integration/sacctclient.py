@@ -24,7 +24,7 @@ class SacctClient(object):
         return 0, "", ""
 
     def get_jobs_acct(self, start, end):
-        fields = ['JobID', 'User', 'Group', 'Account', 'ReservationId', 'Partition', 'Submit', 'Start', 'End',
+        fields = ['JobID', 'User', 'Group', 'Account', 'ReservationId', 'Partition', 'Submit', 'Start', 'End', 'State',
                   'NodeList', 'CPUTimeRAW', 'ElapsedRaw', 'MaxRSS', 'ExitCode', 'NCPUS', 'AllocTres']
 
         command = [
