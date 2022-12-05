@@ -120,6 +120,9 @@ class MongoStorage(object):
     def find_grant_by_name(self, name):
         return self.find_one_by_name_template(Grant, name)
 
+    def find_allocation_usage_by_name(self, name):
+        return self.find_one_by_name_template(AllocationUsage, name)
+
     # finds all
     def find_all_users(self):
         return self.find_all_template(User)
@@ -139,9 +142,6 @@ class MongoStorage(object):
 
     def find_grants_by_group(self, group):
         return self.find_by_filter_template(Grant, {'group': group})
-
-    def find_allocation_usage_by_name(self, name):
-        return self.find_by_filter_template(AllocationUsage, {"name": name})
 
     def find_allocations_by_group(self, group):
         grants = self.find_grants_by_group(group)
