@@ -18,18 +18,18 @@ class Command(BaseCommand):
         self.ms = MongoStorage()
         self.sc = SacctClient()
 
-    def get_current_hour(self):
+    def get_current_hour_timestamp(self):
         now = datetime.now().replace(minute=0, second=0, microsecond=0)
-        return now.strftime("%H:%M:%S")
+        return now.strftime("%Y-%m-%dT%H:%M:%S")
 
-    def get_previous_hour(self):
+    def get_previous_hour_timestamp(self):
         now = datetime.now().replace(minute=0, second=0, microsecond=0)
         previous_hour = now - timedelta(hours=1)
-        return previous_hour.strftime("%H:%M:%S")
+        return previous_hour.strftime("%Y-%m-%dT%H:%M:%S")
 
     def handle(self, *args, **options):
         self.setup()
 
-        jobs = self.sc.get_jobs_acct(self.get_current_hour(), self.get_previous_hour())
+        jobs = self.sc.get_jobs_acct(self.get_previous_hour_timestamp(), self.get_current_hour_timestamp())
 
         print(jobs)
