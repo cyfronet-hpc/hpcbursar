@@ -58,11 +58,16 @@ class Command(BaseCommand):
 
     # TODO: this assumes that usages use only a single key!
     def sum_usages(self, usages):
+        if not usages[0].resources.keys():
+            return {}
         key = list(usages[0].resources.keys())[0]
         result = {key: sum(map(lambda usage: usage.resources[key], usages))}
         return result
 
     def update_allocation_usage(self, allocation, billing, start, end):
+        if not billing:
+            return
+
         now = datetime.now()
         # now = datetime.now(tz=self.pltz)
         allocation_usage = self.ms.find_allocation_usage_by_name(allocation)
