@@ -88,7 +88,7 @@ class Command(BaseCommand):
         parser.add_argument('start_timestamp', nargs='?', default=None)
 
     def sum_dicts(self, a, b):
-        keys = set(a.keys() + b.keys())
+        keys = set(set(a.keys()) + set(b.keys()))
         result = {}
         for key in keys:
             result[key] = a.get(key, 0) + b.get(key, 0)
