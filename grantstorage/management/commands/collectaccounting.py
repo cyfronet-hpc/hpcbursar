@@ -56,7 +56,7 @@ class Command(BaseCommand):
             tokens_mem = elapsed_hours * resources['mem'] / billing_info['mem']
             job_billing['gres/gpu'] = max(tokens_gpu, tokens_cpu, tokens_mem)
         else:
-            print('Warning! Unknown resource:', billing_info)
+            print('Warning! Unknown resource:', job)
 
         return allocation, job_billing
 
@@ -69,9 +69,6 @@ class Command(BaseCommand):
         return result
 
     def update_allocation_usage(self, allocation, billing, start, end):
-        #don't store empty 'usage' records
-        if not billing:
-            return
 
         now = datetime.now()
         # now = datetime.now(tz=self.pltz)
@@ -127,5 +124,8 @@ class Command(BaseCommand):
                 allocation_billing[allocation] = job_billing
 
         for allocation, billing in allocation_billing.items():
+            # don't store empty 'usage' records
+            if not billing:
+                continue
             print(f"Updating billing information for: {allocation} {billing}")
             self.update_allocation_usage(allocation, billing, period_start_date, period_end_date)
