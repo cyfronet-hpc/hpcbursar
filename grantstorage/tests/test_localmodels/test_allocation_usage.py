@@ -20,7 +20,7 @@ class TestSummary(TestCase):
 
         summary_model = self.create_summary_model(last_update, resources)
 
-        self.assertEqual(summary_model.last_update, last_update)
+        self.assertEqual(summary_model.timestamp, last_update)
         self.assertEqual(summary_model.resources, resources)
         self.assertEqual(summary_model.__repr__(), f"SUMMARY: last update: {last_update}, summary: {resources}")
 

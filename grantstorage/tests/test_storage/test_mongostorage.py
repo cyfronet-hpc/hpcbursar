@@ -64,7 +64,7 @@ class TestMongoStorageSingleStore(TestCase):
         result = db["allocation_usages"].find_one({"name": allocation_usage.name})
         self.assertEqual(result["name"], allocation_usage.name)
         self.assertEqual(result["summary"]["last_update"],
-                         allocation_usage.summary.last_update.astimezone().isoformat())
+                         allocation_usage.summary.timestamp.astimezone().isoformat())
         self.assertEqual(result["summary"]["resources"], allocation_usage.summary.resources)
         for i in range(len(result["usage"])):
             self.assertEqual(result["usage"][i]["timestamp"],
@@ -139,7 +139,7 @@ class TestMongoStorageManyStores(TestCase):
             result = db["allocation_usages"].find_one({"name": allocation_usages[i].name})
             self.assertEqual(result["name"], allocation_usages[i].name)
             self.assertEqual(result["summary"]["last_update"],
-                             allocation_usages[i].summary.last_update.astimezone().isoformat())
+                             allocation_usages[i].summary.timestamp.astimezone().isoformat())
             self.assertEqual(result["summary"]["resources"], allocation_usages[i].summary.resources)
             for j in range(len(allocation_usages[i].usage)):
                 self.assertEqual(result["usage"][j]["timestamp"],

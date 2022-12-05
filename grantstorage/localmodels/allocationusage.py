@@ -8,12 +8,12 @@ from rest_framework import serializers
 
 # Summary class and Summary serializer
 class Summary(object):
-    def __init__(self, last_update, resources):
-        self.last_update = last_update
+    def __init__(self, timestamp, resources):
+        self.timestamp = timestamp
         self.resources = resources
 
     def __repr__(self):
-        return f"Summary: last update: {self.last_update}, summary: {self.resources}"
+        return f"Summary: last update: {self.timestamp}, summary: {self.resources}"
 
 
 class SummarySerializer(serializers.Serializer):
@@ -24,7 +24,7 @@ class SummarySerializer(serializers.Serializer):
         return Summary(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.last_update = validated_data.get("last_update", instance.last_update)
+        instance.timestamp = validated_data.get("last_update", instance.timestamp)
         instance.resources = validated_data.get("resources", instance.resources)
         return instance
 
@@ -38,7 +38,7 @@ class Usage(object):
         self.resources = resources
 
     def __repr__(self):
-        return f"USAGE: timestamp: {self.timestamp}, start: {self.start}, end: {self.end}, resources: {self.resources}"
+        return f"Usage: timestamp: {self.timestamp}, start: {self.start}, end: {self.end}, resources: {self.resources}"
 
 
 class UsageSerializer(serializers.Serializer):
