@@ -28,7 +28,7 @@ class SacctClient(object):
                   'NodeList', 'CPUTimeRAW', 'ElapsedRaw', 'MaxRSS', 'ExitCode', 'NCPUS', 'AllocTres']
 
         command = [
-            'sacct', '-D', '-P', '-X',
+            '-D', '-P', '-X',
             '-s', 'BF,CA,CD,F,NF,OOM,PR,TO,DL,RQ',
             '-S', start,
             '-E', end,

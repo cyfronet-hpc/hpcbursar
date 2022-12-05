@@ -152,6 +152,7 @@ SLURM_CLUSTER_NAME = 'ares'
 SLURM_CLIENT_VERBOSE = True
 SLURM_SACCTMGR_LOCATION = '/opt/slurm/releases/production/bin/sacctmgr'
 SLURM_SCONTROL_LOCATION = '/opt/slurm/releases/production/bin/scontrol'
+SLURM_SACCT_LOCATION = '/opt/slurm/releases/production/bin/sacct'
 
 SLURM_SUPPORTED_RESOURCES = ['CPU', 'GPU']
 SLURM_PARTITION_MAPPING = {
