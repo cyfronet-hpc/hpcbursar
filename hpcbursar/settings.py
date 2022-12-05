@@ -163,12 +163,16 @@ SLURM_PARTITION_MAPPING = {
 SLURM_ACL_PLACEHOLDER = 'hpcb'
 
 PARTITION_BILLING = {
-    ('plgrid-gpu-v100'):
-        {'billed_resource': 'gpu', 'mem': 46000, 'cpu': 4},
-    ('plgrid', 'plgrid-testing', 'plgrid-now'):
+    'plgrid':
         {'billed_resource': 'cpu', 'mem': 3850},
-    ('plgrid-bigmem'):
-        {'billed_resource': 'cpu', 'mem': 7700}
+    'plgrid-testing':
+        {'billed_resource': 'cpu', 'mem': 3850},
+    'plgrid-now':
+        {'billed_resource': 'cpu', 'mem': 3850},
+    'plgrid-bigmem':
+        {'billed_resource': 'cpu', 'mem': 7700},
+    'plgrid-gpu-v100':
+        {'billed_resource': 'gres/gpu', 'mem': 46000, 'cpu': 4},
 }
 
 SLURM_ADMIN_USER = 'yaq'
