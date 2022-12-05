@@ -91,7 +91,7 @@ class Command(BaseCommand):
             allocation_usage.summary = summary
             allocation_usage.usages = usages
 
-        print(allocation_usage)
+        # print(allocation_usage)
         self.ms.store_allocation_usage(allocation_usage)
 
     def add_arguments(self, parser):
