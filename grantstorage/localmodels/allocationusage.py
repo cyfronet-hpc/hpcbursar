@@ -13,7 +13,7 @@ class Summary(object):
         self.resources = resources
 
     def __repr__(self):
-        return f"Summary: last update: {self.timestamp}, summary: {self.resources}"
+        return f"Summary: timestamp: {self.timestamp}, summary: {self.resources}"
 
 
 class SummarySerializer(serializers.Serializer):
