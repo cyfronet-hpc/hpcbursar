@@ -52,7 +52,7 @@ class Command(BaseCommand):
             tokens_mem = elapsed_hours * resources['mem'] / billing_info['mem']
             job_billing['gres/gpu'] = max(tokens_gpu, tokens_cpu, tokens_mem)
         else:
-            print('Warning! Unknown resource')
+            print('Warning! Unknown resource:', billing_info)
 
         return allocation, job_billing
 
