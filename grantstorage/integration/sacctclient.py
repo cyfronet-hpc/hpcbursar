@@ -8,7 +8,7 @@ from django.conf import settings
 from datetime import datetime, timedelta
 
 
-class SacctAllocationClient(object):
+class SacctClient(object):
     def __init__(self):
         self.verbose = settings.SLURM_CLIENT_VERBOSE
         self.dryrun = False
@@ -23,7 +23,7 @@ class SacctAllocationClient(object):
             return cp.returncode, cp.stdout, cp.stderr
         return 0, "", ""
 
-    def sacct_command(self, start, end):
+    def get_jobs_acct(self, start, end):
         fields = ['JobID', 'User', 'Group', 'Account', 'ReservationId', 'Partition', 'Submit', 'Start', 'End',
                   'NodeList', 'CPUTimeRAW', 'ElapsedRaw', 'MaxRSS', 'ExitCode', 'NCPUS', 'AllocTres']
 
