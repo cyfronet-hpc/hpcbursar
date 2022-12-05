@@ -67,7 +67,7 @@ class Command(BaseCommand):
             return {}
         result = {}
         for key in keys:
-            result[key] = sum(map(lambda usage: usage.resources[key], usages))
+            result[key] = sum(map(lambda usage: usage.resources.get(key, 0), usages))
         return result
 
     def update_allocation_usage(self, allocation, billing, start, end):
