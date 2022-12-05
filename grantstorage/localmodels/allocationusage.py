@@ -17,14 +17,14 @@ class Summary(object):
 
 
 class SummarySerializer(serializers.Serializer):
-    last_update = serializers.DateTimeField()
+    timestamp = serializers.DateTimeField()
     resources = serializers.DictField()
 
     def create(self, validated_data):
         return Summary(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.timestamp = validated_data.get("last_update", instance.timestamp)
+        instance.timestamp = validated_data.get("timestamp", instance.timestamp)
         instance.resources = validated_data.get("resources", instance.resources)
         return instance
 
