@@ -63,7 +63,8 @@ class Command(BaseCommand):
         return result
 
     def update_allocation_usage(self, allocation, billing, start, end):
-        now = datetime.now(tz=self.pltz)
+        now = datetime.now()
+        # now = datetime.now(tz=self.pltz)
         allocation_usage = self.ms.find_allocation_usage_by_name(allocation)
         if not allocation_usage:
             summary = Summary(timestamp=now, resources=billing)
@@ -97,9 +98,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.setup()
 
-        period_start_date = datetime.now(tz=self.pltz).replace(minute=0, second=0, microsecond=0) - timedelta(hours=1)
+        period_start_date = datetime.now().replace(minute=0, second=0, microsecond=0) - timedelta(hours=1)
+        # period_start_date = datetime.now(tz=self.pltz).replace(minute=0, second=0, microsecond=0) - timedelta(hours=1)
         if options['start_timestamp'] is not None:
-            period_start_date = self.pltz.localize(datetime.strptime(options['start_timestamp'], '%Y-%m-%dT%H:%M:%S'))
+            period_start_date = datetime.strptime(options['start_timestamp'], '%Y-%m-%dT%H:%M:%S')
+            # period_start_date = self.pltz.localize(datetime.strptime(options['start_timestamp'], '%Y-%m-%dT%H:%M:%S'))
         period_end_date = period_start_date + timedelta(minutes=59, seconds=59)
 
         jobs = self.sc.get_jobs_acct(period_start_date.strftime("%Y-%m-%dT%H:%M:%S"),
