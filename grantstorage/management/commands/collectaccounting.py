@@ -51,7 +51,7 @@ class Command(BaseCommand):
             tokens_mem = elapsed_hours * resources['mem'] / billing_info['mem']
             job_billing['cpu'] = max(tokens_cpu, tokens_mem)
         elif billing_info['billed_resource'] == 'gres/gpu':
-            tokens_gpu = elapsed_hours * resources['gres/gpu']
+            tokens_gpu = elapsed_hours * resources.get('gres/gpu', 0)
             tokens_cpu = elapsed_hours * resources['cpu'] / billing_info['cpu']
             tokens_mem = elapsed_hours * resources['mem'] / billing_info['mem']
             job_billing['gres/gpu'] = max(tokens_gpu, tokens_cpu, tokens_mem)

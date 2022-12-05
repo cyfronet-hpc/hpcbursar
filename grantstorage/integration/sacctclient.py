@@ -15,9 +15,9 @@ class SacctClient(object):
         self.sacct_path = settings.SLURM_SACCT_LOCATION
 
     def execute(self, cmd, override=False):
-        cmd_full = [self.sacct_path, "-P"] + cmd
+        cmd_full = [self.sacct_path] + cmd
         if self.verbose:
-            print('Executing command: %s' % str(cmd_full))
+            print('Executing command: %s' % " ".join(cmd_full))
         if not self.dryrun or override:
             cp = subprocess.run(cmd_full, stdout=subprocess.PIPE, text=True)
             return cp.returncode, cp.stdout, cp.stderr
