@@ -28,6 +28,10 @@ class Command(BaseCommand):
         elapsedraw = job['elapsedraw']
         allocation = job['account']
 
+        #job didn't last till allocation
+        if not alloctres:
+            return allocation, {}
+
         elapsed_hours = int(elapsedraw) / 3600.
 
         resources = {}
@@ -65,6 +69,7 @@ class Command(BaseCommand):
         return result
 
     def update_allocation_usage(self, allocation, billing, start, end):
+        #don't store empty 'usage' records
         if not billing:
             return
 
