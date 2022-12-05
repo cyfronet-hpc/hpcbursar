@@ -39,6 +39,8 @@ class SacctClient(object):
         return_code, output, stderr = self.execute(command)
         jobs = []
         for line in output.split('\n'):
+            if not line:
+                continue
             job = dict(zip([field.lower() for field in fields], line.split('|')))
             jobs += [job]
 
