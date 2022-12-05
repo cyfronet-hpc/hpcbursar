@@ -60,12 +60,14 @@ class Command(BaseCommand):
 
         return allocation, job_billing
 
-    # TODO: this assumes that usages use only a single key!
     def sum_usages(self, usages):
-        if not usages[0].resources.keys():
+        keys = set([key for sublist in map(lambda usage: usage.resources.keys(), usages) for key in sublist])
+        # keys = set(map(lambda usage: usage.resources.keys(), usages))
+        if not keys:
             return {}
-        key = list(usages[0].resources.keys())[0]
-        result = {key: sum(map(lambda usage: usage.resources[key], usages))}
+        result = {}
+        for key in keys:
+            result[key] = sum(map(lambda usage: usage.resources[key], usages))
         return result
 
     def update_allocation_usage(self, allocation, billing, start, end):
