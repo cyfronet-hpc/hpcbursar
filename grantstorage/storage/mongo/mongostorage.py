@@ -14,7 +14,7 @@ MODEL_TYPE_TO_COLLECTION = {
     User: 'user',
     Group: 'group',
     Grant: 'grant',
-    AllocationUsage: 'allocation_usages'
+    AllocationUsage: 'allocation_usage'
 }
 
 MODEL_TYPE_TO_SERIALIZER = {
