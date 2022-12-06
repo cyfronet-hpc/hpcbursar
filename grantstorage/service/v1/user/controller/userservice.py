@@ -18,7 +18,7 @@ class UserServicesController:
                 for allocation in grant.allocations:
                     allocation_usage = mongo_storage.find_allocation_usage_by_name(allocation.name)
                     if allocation_usage:
-                        allocation_usage += [allocation_usage]
+                        allocation_usages += [allocation_usage]
                 grants_dict[grant] = (group, allocation_usages)
         return grants_dict
 
