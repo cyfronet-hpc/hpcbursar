@@ -6,6 +6,20 @@
 from rest_framework import serializers
 
 
+class UserGrantInfoAllocationUsageSummary(object):
+    def __init__(self, summary):
+        self.timestamp = summary.timestamp
+        self.resources = summary.resources
+
+    def __str__(self):
+        return f'AllocationUsageSummary: timestamp: {self.timestamp}, resources: {self.resources}'
+
+
+class UserGrantInfoAllocationUsageSummarySerializer(serializers.Serializer):
+    timestamp = serializers.DateTimeField()
+    resources = serializers.DictField()
+
+
 # User grant info allocation
 class UserGrantInfoAllocation(object):
     def __init__(self, allocation):
@@ -23,26 +37,27 @@ class UserGrantInfoAllocationSerializer(serializers.Serializer):
     parameters = serializers.DictField()
 
 
-# User grant info allocation usage
+# # User grant info allocation usage
 class UserGrantInfoAllocationUsage(object):
-    def __init__(self, allocation_usages):
-        self.name = allocation_usages.name
-        self.summary = allocation_usages.summary
-        self.usage = allocation_usages.usage
+    def __init__(self, allocation_usage):
+        self.name = allocation_usage.name
+        self.summary = allocation_usage.summary
+        # self.usages = allocation_usage.usages
 
     def __str__(self):
-        return f"Allocation usages: {self.name}, summary: {self.summary}, usage: {self.usage}"
+        return f"Allocation usage: {self.name}, summary: {self.summary}"
+        # return f"Allocation usage: {self.name}, summary: {self.summary}, usage: {self.usages}"
 
 
 class UserGrantInfoAllocationUsagesSerializer(serializers.Serializer):
     name = serializers.CharField
-    summary = serializers.DictField()
-    usage = serializers.ListField(child=serializers.DictField())
+    summary = UserGrantInfoAllocationUsageSummarySerializer()
+    # usages = serializers.ListField(child=serializers.DictField())
 
 
 # Response
 class UserGrantInfoResponse(object):
-    def __init__(self, grant, group):
+    def __init__(self, grant, group, allocation_usages):
         self.name = grant.name
         self.start = grant.start
         self.end = grant.end
@@ -50,12 +65,14 @@ class UserGrantInfoResponse(object):
         self.allocations = [UserGrantInfoAllocation(allocation) for allocation in grant.allocations]
         self.group = grant.group
         self.group_members = group.members + group.leaders
-        # self.allocations_usages = allocation_usages
+        self.allocations_usages = [
+            UserGrantInfoAllocationUsage(allocation_usage) for allocation_usage in allocation_usages
+        ]
 
     def __str__(self):
         return f"Grant name: {self.name}, start: {self.start}, end: {self.end}, state: {self.state}, " \
-               f"allocations: {self.allocations}, group: {self.group}, group members: {self.group_members}"
-        # f"allocation usages: {self.allocations_usages}"
+               f"allocations: {self.allocations}, group: {self.group}, group members: {self.group_members}", \
+               f"allocation usages: {self.allocations_usages}"
 
 
 class UserGrantInfoSerializer(serializers.Serializer):
@@ -66,4 +83,4 @@ class UserGrantInfoSerializer(serializers.Serializer):
     allocations = UserGrantInfoAllocationSerializer(many=True)
     group = serializers.CharField()
     group_members = serializers.ListField(child=serializers.CharField())
-    # allocations_usages = UserGrantInfoAllocationUsagesSerializer(many=True)
+    allocations_usages = UserGrantInfoAllocationUsagesSerializer(many=True)

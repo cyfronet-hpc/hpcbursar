@@ -13,15 +13,20 @@ class UserServicesController:
         grants_dict = {}
         for group in groups:
             grants = mongo_storage.find_grants_by_group(group.name)
-            for k in grants:
-                grants_dict[k] = group
+            for grant in grants:
+                allocation_usages = []
+                for allocation in grant.allocations:
+                    allocation_usage = mongo_storage.find_allocation_usage_by_name(allocation.name)
+                    if allocation_usage:
+                        allocation_usage += [allocation_usage]
+                grants_dict[grant] = (group, allocation_usages)
         return grants_dict
 
-    def user_allocation_info(self, login):
-        mongo_storage = MongoStorage()
-        groups = mongo_storage.find_groups_by_member(login)
-        allocations = {}
-        for group in groups:
-            allocation = mongo_storage.find_allocation_usages_by_name(group.name)
-            allocations[group] = allocation
-        return allocations
+    # def user_allocation_info(self, login):
+    #     mongo_storage = MongoStorage()
+    #     groups = mongo_storage.find_groups_by_member(login)
+    #     allocations = {}
+    #     for group in groups:
+    #         allocation = mongo_storage.find_allocation_usages_by_name(group.name)
+    #         allocations[group] = allocation
+    #     return allocations
