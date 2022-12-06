@@ -1,3 +1,8 @@
+# Copyright 2022 ACC Cyfronet AGH-UST
+
+# Licensed under the Apache License, Version 2.0,
+# copy of the license is available in the LICENSE file;
+
 from django.core.management.base import BaseCommand
 from grantstorage.integration.portalclient.v2 import PortalClient
 from django.conf import settings
@@ -110,7 +115,8 @@ class Command(BaseCommand):
         groups = self.convert_groups_to_localmodels(portal_groups)
         users = self.convert_users_to_localmodels(portal_users)
 
-        print('done downloading: grants: ' + str(len(grants)) + ', groups: ' + str(len(groups)) + ', users: ' + str(len(users)))
+        print('done downloading: grants: ' + str(len(grants)) + ', groups: ' + str(len(groups)) + ', users: ' + str(
+            len(users)))
         ms = MongoStorage()
         ms.store_users(users)
         ms.store_groups(groups)

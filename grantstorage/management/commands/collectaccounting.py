@@ -1,10 +1,10 @@
 # Copyright 2022 ACC Cyfronet AGH-UST
-import json
 
-import pytz
 # Licensed under the Apache License, Version 2.0,
 # copy of the license is available in the LICENSE file;
 
+import json
+import pytz
 from django.core.management.base import BaseCommand
 from grantstorage.storage.mongo.mongostorage import MongoStorage
 from grantstorage.localmodels.allocationusage import AllocationUsage, Summary, Usage
@@ -28,7 +28,7 @@ class Command(BaseCommand):
         elapsedraw = job['elapsedraw']
         allocation = job['account']
 
-        #job didn't last till allocation
+        # job didn't last till allocation
         if not alloctres:
             return allocation, {}
 

@@ -1,3 +1,8 @@
+# Copyright 2022 ACC Cyfronet AGH-UST
+
+# Licensed under the Apache License, Version 2.0,
+# copy of the license is available in the LICENSE file;
+
 import json
 
 import requests
@@ -68,7 +73,6 @@ class PortalClient(object):
             results += [self.portal_v1_request(self.user_url + site)]
         return results
 
-
 # if __name__ == '__main__':
 #     pc = PortalClient(
 #         'https://portal.plgrid.pl/',
@@ -79,6 +83,6 @@ class PortalClient(object):
 #         '/home/yaq/.globus/ecdsa-p521-private.pem'
 #     )
 
-    # print(json.dumps(pc.download_allocations()))
-    # print(json.dumps(pc.download_grants()))
-    # print(pc.download_users()[1])
+# print(json.dumps(pc.download_allocations()))
+# print(json.dumps(pc.download_grants()))
+# print(pc.download_users()[1])
