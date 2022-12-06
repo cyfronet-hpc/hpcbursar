@@ -49,8 +49,8 @@ class UserGrantInfoAllocationUsage(object):
         # return f"Allocation usage: {self.name}, summary: {self.summary}, usage: {self.usages}"
 
 
-class UserGrantInfoAllocationUsagesSerializer(serializers.Serializer):
-    name = serializers.CharField
+class UserGrantInfoAllocationUsageSerializer(serializers.Serializer):
+    name = serializers.CharField()
     summary = UserGrantInfoAllocationUsageSummarySerializer()
     # usages = serializers.ListField(child=serializers.DictField())
 
@@ -83,4 +83,4 @@ class UserGrantInfoSerializer(serializers.Serializer):
     allocations = UserGrantInfoAllocationSerializer(many=True)
     group = serializers.CharField()
     group_members = serializers.ListField(child=serializers.CharField())
-    allocations_usages = UserGrantInfoAllocationUsagesSerializer(many=True)
+    allocations_usages = UserGrantInfoAllocationUsageSerializer(many=True)
