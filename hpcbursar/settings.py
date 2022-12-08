@@ -156,9 +156,10 @@ SLURM_SACCT_LOCATION = '/opt/slurm/releases/production/bin/sacct'
 
 SLURM_SUPPORTED_RESOURCES = ['CPU', 'GPU']
 SLURM_PARTITION_MAPPING = {
-    lambda a: a.resource == 'CPU': ['plgrid', 'plgrid-now', 'plgrid-testing'],
-    lambda a: a.resource == 'CPU' and a.parameters.get('timelimit', 0) > 72: ['plgrid-long'],
-    lambda a: a.resource == 'GPU': ['plgrid-gpu-v100']
+    lambda a: a.resource == 'cpu': ['plgrid', 'plgrid-now', 'plgrid-testing'],
+    lambda a: a.resource == 'cpu-bigmem': ['plgrid-bigmem'],
+    lambda a: a.resource == 'cpu' and a.parameters.get('timelimit', 0) > 72: ['plgrid-long'],
+    lambda a: a.resource == 'gpu': ['plgrid-gpu-v100']
 }
 SLURM_ACL_PLACEHOLDER = 'hpcb'
 
@@ -168,6 +169,10 @@ PARTITION_BILLING = {
     'plgrid-testing':
         {'billed_resource': 'cpu', 'mem': 3850},
     'plgrid-now':
+        {'billed_resource': 'cpu', 'mem': 3850},
+    'plgrid-long':
+        {'billed_resource': 'cpu', 'mem': 3850},
+    'plgrid-services':
         {'billed_resource': 'cpu', 'mem': 3850},
     'plgrid-bigmem':
         {'billed_resource': 'cpu', 'mem': 7700},
