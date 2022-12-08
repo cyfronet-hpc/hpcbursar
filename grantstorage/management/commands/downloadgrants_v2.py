@@ -24,14 +24,17 @@ class Command(BaseCommand):
         )
 
     def convert_recources_to_local(self, resource_type, portal_parameters):
-        resource_mapping = {"cpu": {
-            "time": "hours",
-            "max-execution-time": "timelimit"
-        }, "gpu": {
-            "time": "hours",
-        }, "storage": {
-            "capacity": "capacity",
-        }
+        resource_mapping = {
+            "cpu": {
+                "time": "hours",
+                "max-execution-time": "timelimit"
+            }, "cpu-bigmem": {
+                "time": "hours",
+            }, "gpu": {
+                "time": "hours",
+            }, "storage": {
+                "capacity": "capacity",
+            }
         }
 
         parameters = {}
@@ -110,7 +113,8 @@ class Command(BaseCommand):
         groups = self.convert_groups_to_localmodels(portal_groups)
         users = self.convert_users_to_localmodels(portal_users)
 
-        print('done downloading: grants: ' + str(len(grants)) + ', groups: ' + str(len(groups)) + ', users: ' + str(len(users)))
+        print('done downloading: grants: ' + str(len(grants)) + ', groups: ' + str(len(groups)) + ', users: ' + str(
+            len(users)))
         ms = MongoStorage()
         ms.store_users(users)
         ms.store_groups(groups)
