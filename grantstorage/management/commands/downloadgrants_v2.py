@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from grantstorage.integration.portalclient.v2 import PortalClient
 from django.conf import settings
-from grantstorage.localmodels.user import User
+from grantstorage.localmodels.user import User, Affiliation
 from grantstorage.localmodels.group import Group
 from grantstorage.localmodels.grant import Grant, Allocation
 from grantstorage.storage.mongo.mongostorage import MongoStorage
@@ -84,8 +84,22 @@ class Command(BaseCommand):
         for portal_users in portal_user_list:
             for portal_user in portal_users:
                 login = portal_user['login']
+                email = portal_user['email']
                 status = portal_user['status']
-                user = User(login=login, status=status)
+                first_name = portal_user['firstName']
+                last_name = portal_user['lastName']
+                opi = portal_user['opi']
+                affiliations = []
+                for affiliation_data in portal_user['affiliationList']:
+                    type = affiliation_data['type']
+                    units = affiliation_data['units']
+                    affiliation_status = affiliation_data['status']
+                    end = datetime.datetime.strptime(affiliation_data['end'].split()[0], DATE_FMT)
+                    affiliation = Affiliation(type=type, units=units, status=affiliation_status, end=end)
+                user = User(
+                    login=login, email=email, status=status, first_name=first_name,
+                    last_name=last_name, opi=opi, affiliations=affiliations
+                )
                 users[login] = user
         return users.values()
 
