@@ -21,7 +21,7 @@ class AffiliationSerializer(serializers.Serializer):
     type = serializers.CharField()
     units = serializers.ListField(child=serializers.CharField())
     status = serializers.CharField()
-    end = serializers.DateField()
+    end = serializers.DateTimeField()
 
     def create(self, validated_data):
         return Affiliation(**validated_data)
