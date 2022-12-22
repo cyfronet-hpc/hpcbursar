@@ -101,6 +101,7 @@ class Command(BaseCommand):
                     affiliation_status = affiliation_data['status']
                     end = datetime.datetime.strptime(affiliation_data['end'].split()[0], DATE_FMT)
                     affiliation = Affiliation(type=type, units=units, status=affiliation_status, end=end)
+                    affiliations += [affiliation]
                 user = User(
                     login=login, email=email, status=status, first_name=first_name,
                     last_name=last_name, opi=opi, affiliations=affiliations

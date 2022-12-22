@@ -55,7 +55,7 @@ class UserSerializer(serializers.Serializer):
     first_name = serializers.CharField()
     last_name = serializers.CharField()
     opi = serializers.CharField()
-    affiliations = AffiliationSerializer()
+    affiliations = AffiliationSerializer(many=True)
 
     def create(self, validated_data):
         affiliations = []
