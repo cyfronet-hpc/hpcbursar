@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 parameters[resource_mapping[resource_type][r]] = v
         return parameters
 
-    def convert_grants_to_localmodel(self, portal_grant_lists, portal_allocation_lists):
+    def convert_grants_to_localmodels(self, portal_grant_lists, portal_allocation_lists):
 
         grant_allocations = {}
         for portal_allocation_list in portal_allocation_lists:
@@ -129,7 +129,7 @@ class Command(BaseCommand):
         portal_groups = self.pc.download_groups()
         portal_users = self.pc.download_users()
 
-        grants = self.convert_grants_to_localmodel(portal_grants, portal_allocations)
+        grants = self.convert_grants_to_localmodels(portal_grants, portal_allocations)
         groups = self.convert_groups_to_localmodels(portal_groups)
         users = self.convert_users_to_localmodels(portal_users)
 
