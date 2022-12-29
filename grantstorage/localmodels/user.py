@@ -54,7 +54,7 @@ class UserSerializer(serializers.Serializer):
     status = serializers.CharField()
     first_name = serializers.CharField()
     last_name = serializers.CharField()
-    opi = serializers.CharField()
+    opi = serializers.CharField(allow_blank=True)
     affiliations = AffiliationSerializer(many=True)
 
     def create(self, validated_data):
@@ -62,7 +62,7 @@ class UserSerializer(serializers.Serializer):
         for a_data in validated_data['affiliations']:
             affiliation = Affiliation(**a_data)
             affiliations.append(affiliation)
-        validated_data.update({'affiliations', affiliations})
+        validated_data.update({'affiliations': affiliations})
 
         return User(**validated_data)
 
