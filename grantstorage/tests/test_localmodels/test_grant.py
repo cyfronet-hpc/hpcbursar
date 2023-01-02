@@ -17,8 +17,8 @@ class TestAllocations(TestCase):
         name = "plguser-cpu"
         resource = "CPU"
         parameters = {"timelimit": 72, "hours": 10000000}
-
         allocation_model = self.create_allocation_model(name, resource, parameters)
+
         self.assertEqual(allocation_model.name, name)
         self.assertEqual(allocation_model.resource, resource)
         self.assertEqual(allocation_model.parameters, parameters)
@@ -26,9 +26,12 @@ class TestAllocations(TestCase):
                          f'Allocation: {name}, resource: {resource}, parameters: {parameters}')
 
     def test_allocation_serializer_contains_expected_fields(self):
-        allocation_data = {"name": "plguser-cpu", "resource": "CPU", "parameters": {"timelimit": 72, "hours": 10000000}}
+        allocation_data = {"name": "plguser-cpu",
+                           "resource": "CPU",
+                           "parameters": {"timelimit": 72, "hours": 10000000}}
         serializer = AllocationSerializer(allocation_data)
         data = serializer.data
+
         self.assertEqual(set(data.keys()), {"name", "resource", "parameters"})
         self.assertEqual(data["name"], "plguser-cpu")
         self.assertEqual(data["resource"], "CPU")
@@ -38,22 +41,25 @@ class TestAllocations(TestCase):
         name = "plguser-cpu"
         resource = "CPU"
         parameters = {"timelimit": 72, "hours": 10000000}
-
         model = self.create_allocation_model(name, resource, parameters)
         serializer = AllocationSerializer(model)
         data = serializer.data
+
         self.assertEqual(set(data.keys()), {"name", "resource", "parameters"})
         self.assertEqual(data["name"], "plguser-cpu")
         self.assertEqual(data["resource"], "CPU")
         self.assertEqual(data["parameters"], {"timelimit": 72, "hours": 10000000})
 
     def test_allocation_serializer_update(self):
-        allocation_data = {"name": "plguser-cpu", "resource": "CPU", "parameters": {"timelimit": 72, "hours": 10000000}}
+        allocation_data = {"name": "plguser-cpu",
+                           "resource": "CPU",
+                           "parameters": {"timelimit": 72, "hours": 10000000}}
         serializer = AllocationSerializer(data=allocation_data)
         self.assertEqual(serializer.is_valid(), True)
         allocation = serializer.save()
 
-        new_allocation_data = {"name": "plguser-gpu", "resource": "GPU",
+        new_allocation_data = {"name": "plguser-gpu",
+                               "resource": "GPU",
                                "parameters": {"timelimit": 10, "hours": 2000}}
         new_model = serializer.update(instance=allocation, validated_data=new_allocation_data)
         new_serializer = AllocationSerializer(new_model)
@@ -83,6 +89,7 @@ class TestGrant(TestCase):
         end = datetime.date(2009, 10, 14)
         allocations = Allocation("plguser-cpu", "CPU", {"timelimit": 72, "hours": 10000000})
         grant_model = self.create_grant_model(name, group, status, start, end, allocations)
+
         self.assertEqual(grant_model.name, name)
         self.assertEqual(grant_model.group, group)
         self.assertEqual(grant_model.status, status)
@@ -91,13 +98,20 @@ class TestGrant(TestCase):
         self.assertEqual(grant_model.allocations, allocations)
 
     def test_grant_serializer_contains_expected_fields(self):
-        grant_data = {"name": "plgplgrid", "group": "plggplgrid", "status": "grant_active",
-                      "start": datetime.date(2009, 10, 11), "end": datetime.date(2009, 10, 14),
-                      "allocations": [
-                          {"name": "plghb9-cpu", "resource": "CPU", "parameters": {"timelimit": 72, "hours": 30000000}},
-                          {"name": "plghb9-storage", "resource": "Storage", "parameters": {"capacity": 20000}}]}
+        grant_data = {"name": "plgplgrid",
+                      "group": "plggplgrid",
+                      "status": "grant_active",
+                      "start": datetime.date(2009, 10, 11),
+                      "end": datetime.date(2009, 10, 14),
+                      "allocations": [{"name": "plghb9-cpu",
+                                       "resource": "CPU",
+                                       "parameters": {"timelimit": 72, "hours": 30000000}},
+                                      {"name": "plghb9-storage",
+                                       "resource": "Storage",
+                                       "parameters": {"capacity": 20000}}]}
         serializer = GrantSerializer(grant_data)
         data = serializer.data
+
         self.assertEqual(set(data.keys()), {"name", "group", "status", "start", "end", "allocations"})
         self.assertEqual(data["name"], "plgplgrid")
         self.assertEqual(data["group"], "plggplgrid")
@@ -119,6 +133,7 @@ class TestGrant(TestCase):
         grant_model = self.create_grant_model(name, group, status, start, end, [allocation_1, allocation_2])
         serializer = GrantSerializer(grant_model)
         data = serializer.data
+
         self.assertEqual(set(data.keys()), {"name", "group", "status", "start", "end", "allocations"})
         self.assertEqual(data["name"], "plgplgrid")
         self.assertEqual(data["group"], "plggplgrid")
@@ -130,19 +145,30 @@ class TestGrant(TestCase):
             {"name": "plghb9-storage", "resource": "Storage", "parameters": {"capacity": 20000}}])
 
     def test_grant_serializer_update(self):
-        grant_data = {"name": "plgplgrid", "group": "plggplgrid", "status": "grant_active",
-                      "start": datetime.date(2009, 10, 11), "end": datetime.date(2009, 10, 14),
-                      "allocations": [
-                          {"name": "plghb9-cpu", "resource": "CPU", "parameters": {"timelimit": 72, "hours": 30000000}},
-                          {"name": "plghb9-storage", "resource": "Storage", "parameters": {"capacity": 20000}}]}
+        grant_data = {"name": "plgplgrid",
+                      "group": "plggplgrid",
+                      "status": "grant_active",
+                      "start": datetime.date(2009, 10, 11),
+                      "end": datetime.date(2009, 10, 14),
+                      "allocations": [{"name": "plghb9-cpu",
+                                       "resource": "CPU",
+                                       "parameters": {"timelimit": 72, "hours": 30000000}},
+                                      {"name": "plghb9-storage",
+                                       "resource": "Storage",
+                                       "parameters": {"capacity": 20000}}]}
         serializer = GrantSerializer(data=grant_data)
         self.assertEqual(serializer.is_valid(), True)
         grant = serializer.save()
-        grant_data = {"name": "test_plgplgrid", "group": "test_plggplgrid", "status": "grant_inactive",
-                      "start": datetime.date(2011, 10, 11), "end": datetime.date(2011, 10, 14),
-                      "allocations": [
-                          {"name": "plg-gpu", "resource": "GPU", "parameters": {"timelimit": 10, "hours": 2000}}]}
-        new_model = serializer.update(instance=grant, validated_data=grant_data)
+
+        new_grant_data = {"name": "test_plgplgrid",
+                          "group": "test_plggplgrid",
+                          "status": "grant_inactive",
+                          "start": datetime.date(2011, 10, 11),
+                          "end": datetime.date(2011, 10, 14),
+                          "allocations": [{"name": "plg-gpu",
+                                           "resource": "GPU",
+                                           "parameters": {"timelimit": 10, "hours": 2000}}]}
+        new_model = serializer.update(instance=grant, validated_data=new_grant_data)
         new_serializer = GrantSerializer(new_model)
         new_data = new_serializer.data
 

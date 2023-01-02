@@ -27,10 +27,13 @@ class TestGroup(TestCase):
                          f'Group: name: {name}, status: {status}, members: {members}, leaders: {leaders}')
 
     def test_group_serializer_contains_expected_values(self):
-        group_data = {"name": "test_group", "status": "ACCEPTED", "members": ["plguser1", "plguser2", "plguser3"],
+        group_data = {"name": "test_group",
+                      "status": "ACCEPTED",
+                      "members": ["plguser1", "plguser2", "plguser3"],
                       "leaders": ["plgadmin", "plguser1"]}
         serializer = GroupSerializer(group_data)
         data = serializer.data
+
         self.assertEqual(set(data.keys()), {"name", "status", "members", "leaders"})
         self.assertEqual(data["name"], "test_group")
         self.assertEqual(data["status"], "ACCEPTED")
@@ -42,10 +45,10 @@ class TestGroup(TestCase):
         status = "ACCEPTED"
         members = ["plguser1", "plguser2", "plguser3"]
         leaders = ["plgadmin", "plguser1"]
-
         model = self.create_group_model(name, status, members, leaders)
         serializer = GroupSerializer(model)
         data = serializer.data
+
         self.assertEqual(set(data.keys()), {"name", "status", "members", "leaders"})
         self.assertEqual(data["name"], "test_group")
         self.assertEqual(data["status"], "ACCEPTED")
@@ -53,13 +56,16 @@ class TestGroup(TestCase):
         self.assertEqual(data["leaders"], ["plgadmin", "plguser1"])
 
     def test_group_serializer_update(self):
-        group_data = {"name": "test_group", "status": "ACCEPTED", "members": ["plguser1", "plguser2", "plguser3"],
+        group_data = {"name": "test_group",
+                      "status": "ACCEPTED",
+                      "members": ["plguser1", "plguser2", "plguser3"],
                       "leaders": ["plgadmin", "plguser1"]}
         serializer = GroupSerializer(data=group_data)
         self.assertEqual(serializer.is_valid(), True)
         group = serializer.save()
 
-        new_group_data = {"name": "new_test_group", "status": "INACTIVE",
+        new_group_data = {"name": "new_test_group",
+                          "status": "INACTIVE",
                           "members": ["plgnewuser1", "plgnewuser2", "plgnewuser3"],
                           "leaders": ["plgnewadmin"]}
         new_model = serializer.update(instance=group, validated_data=new_group_data)
