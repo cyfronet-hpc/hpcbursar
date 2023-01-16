@@ -91,3 +91,7 @@ in particular **pymongo** which is a tool for interacting with MongoDB database 
 ### tests
 
 Inside tests folder, there are tests for `integration`, `localmodels`, `service` and `storage`.
+Run tests:
+```
+python manage.py tests
+```
