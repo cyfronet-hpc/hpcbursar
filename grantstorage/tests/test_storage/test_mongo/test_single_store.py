@@ -23,7 +23,8 @@ class TestMongoStorageSingleStore(TestCase):
 
     def test_store_user(self):
         db = self.get_db()
-        affiliations = [Affiliation("ACADEMIC_UNIT_EMPLOYEE", [], "ACTIVE", date(2023, 12, 31))]
+        affiliations = [Affiliation("ACADEMIC_UNIT_EMPLOYEE", ["Akademickie Centrum Komputerowe Cyfronet AGH"],
+                                    "ACTIVE", date(2023, 12, 31))]
         user, _ = create_and_store_user("user1", "user1@cyfronet.pl", "ACTIVE", "User", "1", "", affiliations)
 
         result = db["user"].find_one({"login": user.login})
@@ -52,14 +53,15 @@ class TestMongoStorageSingleStore(TestCase):
     def test_store_grant(self):
         db = self.get_db()
         allocation = [Allocation("allocation1", "CPU", {"timelimit": 72, "hours": 10000000})]
-        grant, _ = create_and_store_grant("grant1", "group1", "ACTIVE", "2021-05-08", "2022-05-10", allocation)
+        grant, _ = create_and_store_grant("grant1", "group1", "ACTIVE", date(2021, 5, 8), date(2022, 5, 1),
+                                          allocation)
 
         result = db["grant"].find_one({"name": grant.name})
         self.assertEqual(result["name"], grant.name)
         self.assertEqual(result["group"], grant.group)
         self.assertEqual(result["status"], grant.status)
-        self.assertEqual(result["start"], grant.start)
-        self.assertEqual(result["end"], grant.end)
+        self.assertEqual(result["start"], grant.start.isoformat())
+        self.assertEqual(result["end"], grant.end.isoformat())
         for i in range(len(result["allocations"])):
             self.assertEqual(result["allocations"][i]["name"], grant.allocations[i].name)
             self.assertEqual(result["allocations"][i]["resource"], grant.allocations[i].resource)
