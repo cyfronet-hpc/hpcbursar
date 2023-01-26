@@ -78,7 +78,7 @@ class UserSerializer(serializers.Serializer):
         for a_data in validated_data['affiliations']:
             affiliation = Affiliation(**a_data)
             affiliations.append(affiliation)
-        validated_data.update({'affiliations', affiliations})
+        validated_data.update({'affiliations': affiliations})
 
         instance.affiliations = validated_data.get('affiliations', instance.affiliations)
 

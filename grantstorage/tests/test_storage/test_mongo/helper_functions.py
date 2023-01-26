@@ -10,8 +10,8 @@ from grantstorage.localmodels.grant import *
 
 
 # single create and store
-def create_and_store_user(login, status):
-    user = User(login, status)
+def create_and_store_user(login, email, status, first_name, last_name, opi, affiliations):
+    user = User(login, email, status, first_name, last_name, opi, affiliations)
     ms = MongoStorage()
     ms.store_user(user)
     return user, ms
@@ -31,18 +31,18 @@ def create_and_store_grant(name, group, status, start, end, allocations):
     return grant, ms
 
 
-def create_and_store_allocation_usage(name, summary, usage):
-    allocation_usage = AllocationUsage(name, summary, usage)
+def create_and_store_allocation_usage(name, summary, usages):
+    allocation_usage = AllocationUsage(name, summary, usages)
     ms = MongoStorage()
     ms.store_allocation_usage(allocation_usage)
     return allocation_usage, ms
 
 
 # many create and store
-def create_and_store_many_users(logins, statuses):
+def create_and_store_many_users(logins, emails, statuses, first_names, last_names, opis, affiliations):
     users = []
     for i in range(len(logins)):
-        users.append(User(logins[i], statuses[i]))
+        users.append(User(logins[i], emails[i], statuses[i], first_names[i], last_names[i], opis[i], affiliations[i]))
     ms = MongoStorage()
     ms.store_users(users)
     return users, ms
