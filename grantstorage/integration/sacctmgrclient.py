@@ -38,23 +38,23 @@ class SacctmgrClient(object):
 
     # updates
     def update_user_default_account(self, login, account):
-        cmd = ['update', 'user', 'name=' + login, 'set defaultaccount=' + account]
+        cmd = ['update', 'user', 'name=' + login, 'set', 'defaultaccount=' + account]
         self.execute(cmd)
 
     def update_user_account_maxsubmit(self, login, account, maxsubmit):
-        cmd = ['update', 'user', 'name=' + login, 'account=' + account, 'set maxsubmit=' + str(maxsubmit)]
+        cmd = ['update', 'user', 'name=' + login, 'account=' + account, 'set', 'maxsubmit=' + str(maxsubmit)]
         self.execute(cmd)
 
     def update_user_maxsubmit(self, login, maxsubmit):
-        cmd = ['update', 'user', 'name=' + login, 'set maxsubmit=' + str(maxsubmit)]
+        cmd = ['update', 'user', 'name=' + login, 'set', 'maxsubmit=' + str(maxsubmit)]
         self.execute(cmd)
 
     def update_account_maxsubmit(self, account, maxsubmit):
-        cmd = ['update', 'account', 'name=' + account, 'set maxsubmit=' + str(maxsubmit)]
+        cmd = ['update', 'account', 'name=' + account, 'set', 'maxsubmit=' + str(maxsubmit)]
         self.execute(cmd)
 
     def update_account_fairshare(self, account, fairshare):
-        cmd = ['update', 'account', 'name=' + account, 'set fairshare=' + str(fairshare)]
+        cmd = ['update', 'account', 'name=' + account, 'set', 'fairshare=' + str(fairshare)]
         self.execute(cmd)
 
     # remove
