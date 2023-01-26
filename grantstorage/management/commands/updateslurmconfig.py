@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
     def is_grant_active(self, grant):
         end = grant.end + datetime.timedelta(days=1)
-        if end > datetime.datetime.now().date() and grant.start < datetime.datetime.now().date() and 'accepted' in grant.status:
+        if end >= datetime.datetime.now().date() and grant.start <= datetime.datetime.now().date() and 'accepted' in grant.status:
             return True
         else:
             return False
@@ -110,6 +110,8 @@ class Command(BaseCommand):
                         self.sc.remove_user(user)
 
     def add_slurm_account(self, grant, allocation, group):
+        if not grant.is_active:
+            return
         fs = self.calculate_fairshare(grant.start, grant.end, allocation.parameters['hours'])
         self.sc.add_account(allocation.name, fs)
         for user in group.get_all_members():
