@@ -54,7 +54,8 @@ class Command(BaseCommand):
             grants.sort(key=lambda g: g.start)
             for grant in grants:
                 for allocation in grant.allocations:
-                    user_account_dict[user] += [allocation.name]
+                    if allocation.resource in settings.SLURM_SUPPORTED_RESOURCES:
+                        user_account_dict[user] += [allocation.name]
 
         return user_account_dict
 
