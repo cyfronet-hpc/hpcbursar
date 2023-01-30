@@ -42,7 +42,7 @@ class AdminGrantInfoSerializer(serializers.Serializer):
     allocations = AdminAllocationInfoSerializer(many=True)
 
 
-class AdminGrantsInfo(APIView):
+class AdminGrantsInfoView(APIView):
     permission_classes = [AdminPermission]
 
     def get(self, request, name):

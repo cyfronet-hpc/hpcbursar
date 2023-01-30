@@ -25,7 +25,7 @@ class AdminGroupInfoSerializer(serializers.Serializer):
     leaders = serializers.ListField(child=serializers.CharField())
 
 
-class AdminGroupsInfo(APIView):
+class AdminGroupsInfoView(APIView):
     permission_classes = [AdminPermission]
 
     def get(self, request, name):
