@@ -46,7 +46,7 @@ class AdminUserInfoSerializer(serializers.Serializer):
     affiliations = AdminAffiliationInfoSerializer(many=True)
 
 
-class AdminUsersInfoView(APIView):
+class AdminUsersInfo(APIView):
     permission_classes = [AdminPermission]
 
     def get(self, request, login):

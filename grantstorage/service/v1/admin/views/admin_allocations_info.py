@@ -49,7 +49,7 @@ class AdminAllocationUsageInfoSerializer(serializers.Serializer):
     usages = serializers.ListField(child=AdminUsageInfoSerializer())
 
 
-class AdminAllocationsInfoView(APIView):
+class AdminAllocationsInfo(APIView):
     permission_classes = [AdminPermission]
 
     def get(self, request, name):
