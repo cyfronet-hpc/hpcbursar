@@ -11,6 +11,7 @@ from grantstorage.localmodels.allocationusage import AllocationUsage, Summary, U
 from grantstorage.integration.sacctclient import SacctClient
 from datetime import datetime, timedelta
 from django.conf import settings
+from math import ceil
 
 
 class Command(BaseCommand):
@@ -48,12 +49,12 @@ class Command(BaseCommand):
         job_billing = {}
         if billing_info['billed_resource'] == 'cpu':
             tokens_cpu = elapsed_hours * resources['cpu']
-            tokens_mem = elapsed_hours * resources['mem'] / billing_info['mem']
+            tokens_mem = elapsed_hours * ceil(resources['mem'] / billing_info['mem'])
             job_billing['cpu'] = max(tokens_cpu, tokens_mem)
         elif billing_info['billed_resource'] == 'gres/gpu':
             tokens_gpu = elapsed_hours * resources.get('gres/gpu', 0)
-            tokens_cpu = elapsed_hours * resources['cpu'] / billing_info['cpu']
-            tokens_mem = elapsed_hours * resources['mem'] / billing_info['mem']
+            tokens_cpu = elapsed_hours * ceil(resources['cpu'] / billing_info['cpu'])
+            tokens_mem = elapsed_hours * ceil(resources['mem'] / billing_info['mem'])
             job_billing['gres/gpu'] = max(tokens_gpu, tokens_cpu, tokens_mem)
         else:
             print('Warning! Unknown resource:', job)
