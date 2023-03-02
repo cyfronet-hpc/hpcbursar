@@ -49,7 +49,7 @@ class AdminUserInfoSerializer(serializers.Serializer):
 class AdminUsersInfo(APIView):
     permission_classes = [AdminPermission]
 
-    def get(self, request, login):
+    def get(self, login):
         admin_service_controller = AdminServicesController()
         user = admin_service_controller.user_info(login)
         user_info = AdminUserInfo(user)

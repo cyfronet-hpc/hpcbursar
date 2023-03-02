@@ -28,7 +28,7 @@ class AdminGroupInfoSerializer(serializers.Serializer):
 class AdminGroupsInfo(APIView):
     permission_classes = [AdminPermission]
 
-    def get(self, request, name):
+    def get(self, name):
         admin_service_controller = AdminServicesController()
         group = admin_service_controller.group_info(name)
         group_info = AdminGroupInfo(group)
