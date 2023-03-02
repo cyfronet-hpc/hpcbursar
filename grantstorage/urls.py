@@ -17,7 +17,7 @@ urlpatterns = [
     # admin
     path('admin/grants_group_info/', AdminGrantGroupInfoView.as_view(), name="grants_group_info"),
     path('admin/grants/<name>/', AdminGrantsInfo.as_view(), dname="admin_grants"),
-    path('admin/users/<login>/', AdminUsersInfo.as_view(), name="admin_users"),
+    path('admin/users/<name>/', AdminUsersInfo.as_view(), name="admin_users"),
     path('admin/groups/<name>/', AdminGroupsInfo.as_view(), name="admin_groups"),
     path('admin/allocations/<name>/', AdminAllocationsInfo.as_view(), name="admin_allocations"),
 ]
