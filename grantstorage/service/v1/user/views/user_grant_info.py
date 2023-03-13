@@ -26,15 +26,22 @@ class UserGrantInfoAllocation(object):
         self.name = allocation.name
         self.resource = allocation.resource
         self.parameters = allocation.parameters
+        self.status = allocation.status
+        self.start = allocation.start
+        self.end = allocation.end
 
     def __str__(self):
-        return f'Allocation: {self.name}, resource: {self.resource}, parameters: {self.parameters}'
+        return f'Allocation: {self.name}, resource: {self.resource}, parameters: {self.parameters}, ' \
+               f'status: {self.status}, start: {self.start}, end: {self.end}'
 
 
 class UserGrantInfoAllocationSerializer(serializers.Serializer):
     name = serializers.CharField()
     resource = serializers.CharField()
     parameters = serializers.DictField()
+    status = serializers.CharField()
+    start = serializers.DateField()
+    end = serializers.DateField()
 
 
 # # User grant info allocation usage
@@ -71,8 +78,8 @@ class UserGrantInfoResponse(object):
 
     def __str__(self):
         return f"Grant name: {self.name}, start: {self.start}, end: {self.end}, state: {self.state}, " \
-               f"allocations: {self.allocations}, group: {self.group}, group members: {self.group_members}", \
-               f"allocation usages: {self.allocations_usages}"
+            f"allocations: {self.allocations}, group: {self.group}, group members: {self.group_members}", \
+            f"allocation usages: {self.allocations_usages}"
 
 
 class UserGrantInfoSerializer(serializers.Serializer):
