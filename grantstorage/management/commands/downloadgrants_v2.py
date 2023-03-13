@@ -59,9 +59,14 @@ class Command(BaseCommand):
                 name = portal_allocation['name']
                 resource = portal_allocation['resource']
                 portal_parameters = portal_allocation['parameterValues']
-                status = portal_allocation['status']
                 start = datetime.datetime.strptime(portal_allocation['start'], DATE_FMT).date()
                 end = datetime.datetime.strptime(portal_allocation['end'], DATE_FMT).date()
+                status = portal_allocation['status']
+
+                now = datetime.datetime.now().date()
+                if end + datetime.timedelta(days=1) >= now >= start and status == 'accepted':
+                    status = 'active'
+
                 if resource.startswith('storage'):
                     resource = 'storage'
                 parameters = self.convert_recources_to_local(resource, portal_parameters)
@@ -79,9 +84,14 @@ class Command(BaseCommand):
                 # try:
                 name = portal_grant['name']
                 group = portal_grant['team']
-                status = portal_grant['status']
                 start = datetime.datetime.strptime(portal_grant['start'], DATE_FMT).date()
                 end = datetime.datetime.strptime(portal_grant['end'], DATE_FMT).date()
+                status = portal_grant['status']
+
+                now = datetime.datetime.now().date()
+                if end + datetime.timedelta(days=1) >= now >= start and status == 'accepted':
+                    status = 'active'
+
                 grant = Grant(name=name, group=group, status=status, start=start, end=end,
                               allocations=grant_allocations.get(name, []))
                 grants[name] = grant
