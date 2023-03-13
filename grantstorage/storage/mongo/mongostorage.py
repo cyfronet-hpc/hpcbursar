@@ -55,7 +55,7 @@ class MongoStorage(object):
         if not documents:
             return documents
         serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=documents, many=True)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
         return serializer.save()
 
     def find_one_by_name_template(self, model_type, name):
@@ -66,7 +66,7 @@ class MongoStorage(object):
         if not document:
             return document
         serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=document)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
         return serializer.save()
 
     def find_all_template(self, model_type):
@@ -76,7 +76,7 @@ class MongoStorage(object):
         if not documents:
             return documents
         serializer = MODEL_TYPE_TO_SERIALIZER[model_type](data=documents, many=True)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
         return serializer.save()
 
     # stores
