@@ -30,18 +30,7 @@ class Command(BaseCommand):
 
     # TODO: move the mapping to config
     def convert_recources_to_local(self, resource_type, portal_parameters):
-        resource_mapping = {
-            "cpu": {
-                "time": "hours",
-                "max-execution-time": "timelimit"
-            }, "cpu-bigmem": {
-                "time": "hours",
-            }, "gpu": {
-                "time": "hours",
-            }, "storage": {
-                "capacity": "capacity",
-            }
-        }
+        resource_mapping = settings.PORTAL_RESOURCE_MAPPING
 
         parameters = {}
 

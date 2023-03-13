@@ -144,6 +144,23 @@ PLGRID_PORTAL_V1_URL = 'https://portal.plgrid.pl/'
 PLGRID_PORTAL_V2_URL = 'https://grants.pre.plgrid.pl/'
 PLGRID_SITE_NAMES = ['CYFRONET-ARES', 'CYFRONET-HPC-STORAGE']
 
+PORTAL_RESOURCE_MAPPING = {
+    "cpu": {
+        "time": "hours",
+        "max-execution-time": "timelimit"
+    }, "cpu-bigmem": {
+        "time": "hours",
+    }, "gpu": {
+        "time": "hours",
+    }, "gpu-a100": {
+        "time": "hours",
+    }, "gpu-v100": {
+        "time": "hours",
+    }, "storage": {
+        "capacity": "capacity",
+    }
+}
+
 PLG_LOGIN_PREFIX = 'plg'
 PLG_ACCOUNT_PREFIX = 'plg'
 
