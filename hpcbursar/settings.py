@@ -194,6 +194,8 @@ PARTITION_BILLING = {
         {'billed_resource': 'cpu', 'mem': 7700},
     'plgrid-gpu-v100':
         {'billed_resource': 'gres/gpu', 'mem': 46000, 'cpu': 4},
+    'plgrid-gpu-a100':
+        {'billed_resource': 'gres/gpu', 'mem': 128000, 'cpu': 16},
 }
 
 SLURM_ADMIN_USER = 'yaq'
