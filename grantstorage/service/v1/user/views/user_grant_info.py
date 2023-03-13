@@ -68,7 +68,7 @@ class UserGrantInfoResponse(object):
         self.name = grant.name
         self.start = grant.start
         self.end = grant.end
-        self.state = grant.status
+        self.status = grant.status
         self.allocations = [UserGrantInfoAllocation(allocation) for allocation in grant.allocations]
         self.group = grant.group
         self.group_members = group.members + group.leaders
@@ -77,7 +77,7 @@ class UserGrantInfoResponse(object):
         ]
 
     def __str__(self):
-        return f"Grant name: {self.name}, start: {self.start}, end: {self.end}, state: {self.state}, " \
+        return f"Grant name: {self.name}, start: {self.start}, end: {self.end}, status: {self.status}, " \
             f"allocations: {self.allocations}, group: {self.group}, group members: {self.group_members}", \
             f"allocation usages: {self.allocations_usages}"
 
@@ -86,7 +86,7 @@ class UserGrantInfoSerializer(serializers.Serializer):
     name = serializers.CharField()
     start = serializers.DateField()
     end = serializers.DateField()
-    state = serializers.CharField()
+    status = serializers.CharField()
     allocations = UserGrantInfoAllocationSerializer(many=True)
     group = serializers.CharField()
     group_members = serializers.ListField(child=serializers.CharField())

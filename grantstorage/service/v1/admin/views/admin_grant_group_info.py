@@ -32,7 +32,7 @@ class AdminGrantInfoGrant(object):
         self.name = grant.name
         self.start = grant.start
         self.end = grant.end
-        self.state = grant.status
+        self.status = grant.status
         self.allocations = [AdminGrantInfoAllocation(allocation) for allocation in grant.allocations]
         self.group = grant.group
 
@@ -41,7 +41,7 @@ class AdminGrantInfoGrantSerializer(serializers.Serializer):
     name = serializers.CharField()
     start = serializers.DateField()
     end = serializers.DateField()
-    state = serializers.CharField()
+    status = serializers.CharField()
     allocations = AdminGrantInfoAllocationSerializer(many=True)
     group = serializers.CharField()
 
