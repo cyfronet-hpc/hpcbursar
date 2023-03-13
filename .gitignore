@@ -118,5 +118,5 @@ dmypy.json
 .idea/
 
 # Local settings
-/hpcbursar/local_settings.py
+/hpcbursar/settings_local.py
 /grantstorage/management/commands/testfunc.py

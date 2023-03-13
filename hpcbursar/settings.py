@@ -181,5 +181,8 @@ PARTITION_BILLING = {
 
 SLURM_ADMIN_USER = 'yaq'
 
-# overwriting settings with default ones
-# from hpcbursar.local_settings import *
+# deployment specific settings
+try:
+    from .settings_local import *
+except ImportError:
+    pass
