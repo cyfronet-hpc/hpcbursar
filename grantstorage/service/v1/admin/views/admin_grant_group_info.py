@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers
 
-
 from grantstorage.service.v1.admin.controller.adminservice import AdminServicesController
 from grantstorage.service.v1.admin.views.admin_grant_group_info_permission import AdminMungePermission
 
@@ -66,9 +65,6 @@ class AdminGrantInfoResponse(object):
 class AdminGrantInfoReponseSerializer(serializers.Serializer):
     grants = AdminGrantInfoGrantSerializer(many=True)
     groups = AdminGrantInfoGroupSerializer(many=True)
-
-
-
 
 
 class AdminGrantGroupInfoView(APIView):
