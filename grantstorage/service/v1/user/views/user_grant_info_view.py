@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from grantstorage.service.v1.user.controller.userservice import UserServicesController
 from grantstorage.service.v1.user.views.user_grant_info import UserGrantInfoResponse, UserGrantInfoSerializer
-from grantstorage.service.v1.user.views.permission import UserGrantInfoMungePermission
+from grantstorage.service.v1.user.views.user_grant_info_permission import UserGrantInfoMungePermission
 
 
 class UserGrantInfoView(APIView):
