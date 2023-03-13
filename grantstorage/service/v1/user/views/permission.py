@@ -4,6 +4,7 @@
 # copy of the license is available in the LICENSE file;
 
 import pymunge
+import pwd
 from rest_framework.permissions import BasePermission
 
 
@@ -16,7 +17,11 @@ class UserGrantInfoMungePermission(BasePermission):
                 decoded_payload = payload.decode('utf-8')
                 username, service_request = decoded_payload.split(":")
                 request_username = request.build_absolute_uri().split('/')[-1]
-                if username == request_username:
+                uid_username = None
+                try:
+                    uid_username = pwd.getpwuid(uid)[0]
+                except KeyError:
+                    print('Unknown uid!')
+                if username == request_username and username == uid_username:
                     return True
-        print("No permission")
         return False
