@@ -136,6 +136,7 @@ class Command(BaseCommand):
                 self.sc.add_user_account(user, allocation.name)
             else:
                 if slurm_account['users'][user]['maxsubmit'] == 0:
+                    #TODO are we sure that the maxsubmit can be reversed?
                     self.sc.update_user_account_maxsubmit(user, allocation.name, -1)
 
         for slurm_user in slurm_account['users'].keys():
