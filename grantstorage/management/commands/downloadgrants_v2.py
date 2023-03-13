@@ -28,6 +28,7 @@ class Command(BaseCommand):
             settings.EC_PRIVKEY_LOCATION,
         )
 
+    # TODO: move the mapping to config
     def convert_recources_to_local(self, resource_type, portal_parameters):
         resource_mapping = {
             "cpu": {
@@ -58,11 +59,15 @@ class Command(BaseCommand):
                 name = portal_allocation['name']
                 resource = portal_allocation['resource']
                 portal_parameters = portal_allocation['parameterValues']
+                status = portal_allocation['status']
+                start = datetime.datetime.strptime(portal_allocation['start'], DATE_FMT).date()
+                end = datetime.datetime.strptime(portal_allocation['end'], DATE_FMT).date()
                 if resource.startswith('storage'):
                     resource = 'storage'
                 parameters = self.convert_recources_to_local(resource, portal_parameters)
                 grant_name = portal_allocation['grantName']
-                allocation = Allocation(name=name, resource=resource, parameters=parameters)
+                allocation = Allocation(name=name, resource=resource, parameters=parameters, status=status, start=start,
+                                        end=end)
                 if grant_name not in grant_allocations.keys():
                     grant_allocations[grant_name] = [allocation]
                 else:

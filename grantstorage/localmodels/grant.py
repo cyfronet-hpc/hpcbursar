@@ -7,19 +7,26 @@ from rest_framework import serializers
 
 
 class Allocation(object):
-    def __init__(self, name, resource, parameters):
+    def __init__(self, name, resource, parameters, status, start, end):
         self.name = name
         self.resource = resource
         self.parameters = parameters
+        self.status = status
+        self.start = start
+        self.end = end
 
     def __repr__(self):
-        return f'Allocation: {self.name}, resource: {self.resource}, parameters: {self.parameters}'
+        return f'Allocation: {self.name}, resource: {self.resource}, parameters: {self.parameters}, ' \
+               f'status: {self.status}, start: {self.start}, end: {self.end}'
 
 
 class AllocationSerializer(serializers.Serializer):
     name = serializers.CharField()
     resource = serializers.CharField()
     parameters = serializers.DictField()
+    status = serializers.CharField()
+    start = serializers.DateField()
+    end = serializers.DateField()
 
     def create(self, validated_data):
         return Allocation(**validated_data)
@@ -28,6 +35,9 @@ class AllocationSerializer(serializers.Serializer):
         instance.name = validated_data.get('name', instance.name)
         instance.resource = validated_data.get('resource', instance.name)
         instance.parameters = validated_data.get('parameters', instance.name)
+        instance.status = validated_data.get('status', instance.name)
+        instance.start = serializers.DateField()
+        instance.end = serializers.DateField()
         return instance
 
 
