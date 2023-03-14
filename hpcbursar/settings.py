@@ -170,7 +170,7 @@ SLURM_SACCTMGR_LOCATION = '/opt/slurm/releases/production/bin/sacctmgr'
 SLURM_SCONTROL_LOCATION = '/opt/slurm/releases/production/bin/scontrol'
 SLURM_SACCT_LOCATION = '/opt/slurm/releases/production/bin/sacct'
 
-SLURM_SUPPORTED_RESOURCES = ['CPU', 'GPU']
+SLURM_SUPPORTED_RESOURCES = ['cpu', 'gpu', 'cpu-bigmem']
 SLURM_PARTITION_MAPPING = {
     lambda a: a.resource == 'cpu': ['plgrid', 'plgrid-now', 'plgrid-testing'],
     lambda a: a.resource == 'cpu-bigmem': ['plgrid-bigmem'],
@@ -200,9 +200,13 @@ PARTITION_BILLING = {
 
 MARK_EXHAUSTED_ALLOCATIONS = False
 
-BILLED_TO_ALLOCATION_MAPPING = {
-    'cpu': 'hours',
-    'gres/gpu': 'hours',
+RESOURCE_TYPE_TO_BILLING_GLUE = {
+    'cpu':
+        {'parameter': 'hours', 'billed_resource': 'cpu'},
+    'cpu-bigmem':
+        {'parameter': 'hours', 'billed_resource': 'cpu'},
+    'gpu':
+        {'parameter': 'hours', 'billed_resource': 'gres/gpu'},
 }
 
 SLURM_ADMIN_USER = 'yaq'
