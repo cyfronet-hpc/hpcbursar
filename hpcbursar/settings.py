@@ -28,10 +28,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', "CHANGEME")
+SECRET_KEY = os.environ.get('SECRET_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -196,6 +196,13 @@ PARTITION_BILLING = {
         {'billed_resource': 'gres/gpu', 'mem': 46000, 'cpu': 4},
     'plgrid-gpu-a100':
         {'billed_resource': 'gres/gpu', 'mem': 128000, 'cpu': 16},
+}
+
+MARK_EXHAUSTED_ALLOCATIONS = False
+
+BILLED_TO_ALLOCATION_MAPPING = {
+    'cpu': 'hours',
+    'gres/gpu': 'hours',
 }
 
 SLURM_ADMIN_USER = 'yaq'
