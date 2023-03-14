@@ -16,7 +16,7 @@ Slurm account management based on concept of 'grants'.
 * Main hpcbursar installation should be done on the slurm host. This machine will serve the apis used by other tools,
   namely 'hpcbursarcli'. HTTP APIs should be accessible from the cluster network.
 * Deploy the main Django webapp: https://docs.djangoproject.com/en/4.0/howto/deployment/
-* Set the GRID_, EC_, PLGRID_, PLG_, SLURM_, variables in settings.py file, according to your specific site
+* Set the SECRET_KEY, GRID_, EC_, PLGRID_, PLG_, SLURM_, variables in settings.py file, according to your specific site
   configuration. Please contact PLGrid CO for clarification on accessing the Portal APIs.
 * Create a cronjob to periodically execute the downloadgrants, updatepartitions, updateslurmconfig commands, by using
   the "python manage.py" interface, e.g.:
