@@ -17,9 +17,16 @@ class Command(BaseCommand):
         self.ms = MongoStorage()
         self.sc = ScontrolClient()
 
-    def is_grant_active(self, grant):
-        end = grant.end + datetime.timedelta(days=1)
-        if (end >= datetime.datetime.now().date() and grant.start <= datetime.datetime.now().date() and 'accepted' in grant.status) or 'active' in grant.status:
+    # def is_grant_active(self, grant):
+    #     end = grant.end + datetime.timedelta(days=1)
+    #     if (end >= datetime.datetime.now().date() and grant.start <= datetime.datetime.now().date() and 'accepted' in grant.status) or 'active' in grant.status:
+    #         return True
+    #     else:
+    #         return False
+
+    def is_allocation_active(self, allocation):
+        end = allocation.end + datetime.timedelta(days=1)
+        if (end >= datetime.datetime.now().date() >= allocation.start and 'accepted' in allocation.status) or 'active' in allocation.status:
             return True
         else:
             return False
@@ -28,15 +35,16 @@ class Command(BaseCommand):
         self.setup()
 
         grants = self.ms.find_all_grants()
-        for grant in grants:
-            grant.is_active = self.is_grant_active(grant)
+        # for grant in grants:
+        #     grant.is_active = self.is_grant_active(grant)
 
         partition_mapping = settings.SLURM_PARTITION_MAPPING
         partition_account = {}
 
         for grant in grants:
-            if grant.is_active:
-                for allocation in grant.allocations:
+            # if grant.is_active:
+            for allocation in grant.allocations:
+                if self.is_allocation_active(allocation):
                     for cond, partitions in partition_mapping.items():
                         if cond(allocation):
                             for partition in partitions:
