@@ -26,7 +26,16 @@ class Command(BaseCommand):
 
     def is_grant_active(self, grant):
         end = grant.end + datetime.timedelta(days=1)
-        if (end >= datetime.datetime.now().date() and grant.start <= datetime.datetime.now().date() and 'accepted' in grant.status) or 'active' in grant.status:
+        if (
+                end >= datetime.datetime.now().date() >= grant.start and 'accepted' in grant.status) or 'active' in grant.status:
+            return True
+        else:
+            return False
+
+    def is_allocation_active(self, allocation):
+        end = allocation.end + datetime.timedelta(days=1)
+        if (
+                end >= datetime.datetime.now().date() >= allocation.start and 'accepted' in allocation.status) or 'active' in allocation.status:
             return True
         else:
             return False
@@ -38,8 +47,6 @@ class Command(BaseCommand):
             user_grants_dict[user] = []
 
         for grant in grants:
-            if not grant.is_active:
-                continue
             group = group_dict[grant.group]
             for user in group.get_all_members():
                 if user not in user_grants_dict.keys():
@@ -51,11 +58,16 @@ class Command(BaseCommand):
         for user, grants in user_grants_dict.items():
             user_account_dict[user] = []
 
-            grants.sort(key=lambda g: g.start)
+            user_allocations = []
+            # grants.sort(key=lambda g: g.start)
             for grant in grants:
                 for allocation in grant.allocations:
                     if allocation.resource in settings.SLURM_SUPPORTED_RESOURCES:
-                        user_account_dict[user] += [allocation.name]
+                        if allocation.is_active:
+                            user_allocations += [allocation]
+
+            user_allocations.sort(key=lambda a: a.start)
+            user_account_dict[user] = user_allocations
 
         return user_account_dict
 
@@ -110,22 +122,20 @@ class Command(BaseCommand):
                     else:
                         self.sc.remove_user(user)
 
-    def add_slurm_account(self, grant, allocation, group):
-        if not grant.is_active:
-            return
-        fs = self.calculate_fairshare(grant.start, grant.end, allocation.parameters['hours'])
+    def add_slurm_account(self, allocation, group):
+        fs = self.calculate_fairshare(allocation.start, allocation.end, allocation.parameters['hours'])
         self.sc.add_account(allocation.name, fs)
         for user in group.get_all_members():
             self.sc.add_user_account(user, allocation.name)
 
-    def sync_slurm_account(self, grant, allocation, group, slurm_account, managed_users):
-        if not grant.is_active:
+    def sync_slurm_account(self, allocation, group, slurm_account, managed_users):
+        if not allocation.is_active:
             for user in slurm_account['users'].keys():
                 self.sc.remove_user_account(user, allocation.name)
             self.sc.remove_account(allocation.name)
             return
 
-        fs = self.calculate_fairshare(grant.start, grant.end, allocation.parameters['hours'])
+        fs = self.calculate_fairshare(allocation.start, allocation.end, allocation.parameters['hours'])
         if slurm_account['fairshare'] != fs:
             self.sc.update_account_fairshare(allocation.name, fs)
         if slurm_account['maxsubmit'] == 0:
@@ -136,7 +146,7 @@ class Command(BaseCommand):
                 self.sc.add_user_account(user, allocation.name)
             else:
                 if slurm_account['users'][user]['maxsubmit'] == 0:
-                    #TODO are we sure that the maxsubmit can be reversed?
+                    # TODO are we sure that the maxsubmit can be reversed?
                     self.sc.update_user_account_maxsubmit(user, allocation.name, -1)
 
         for slurm_user in slurm_account['users'].keys():
@@ -151,19 +161,17 @@ class Command(BaseCommand):
         # grants = list(filter(lambda grant: grant.name == 'plgplgrid', self.ms.find_all_grants()))
         grants = self.ms.find_all_grants()
         users = list(filter(lambda user: user.status == 'ACTIVE', users))
-        grant_dict = {}
         user_dict = {}
         group_dict = {}
         for user in users:
             user_dict[user.login] = user
         for grant in grants:
             grant.is_active = self.is_grant_active(grant)
-            grant_dict[grant.name] = grant
+            for allocation in grant.allocations:
+                allocation.is_active = self.is_allocation_active(allocation)
         for group in groups:
             self.filter_group_users(group, user_dict.keys())
             group_dict[group.name] = group
-
-        # user_da_dict = self.find_default_accounts(users, group_dict, grants)
 
         slurm_assoc = self.sc.get_assoc_dict()
         slurm_user_da_dict = self.sc.get_user_default_account_dict()
@@ -172,8 +180,9 @@ class Command(BaseCommand):
         for grant in grants:
             for allocation in grant.allocations:
                 if allocation.resource in settings.SLURM_SUPPORTED_RESOURCES:
-                    if allocation.name not in slurm_assoc.keys():
-                        self.add_slurm_account(grant, allocation, group_dict[grant.group])
+                    if allocation.is_active:
+                        if allocation.name not in slurm_assoc.keys():
+                            self.add_slurm_account(grant, allocation, group_dict[grant.group])
 
         print('find managed user_accounts')
         user_managed_accounts = self.find_user_managed_accounts(user_dict.keys(), group_dict, grants)
@@ -190,5 +199,5 @@ class Command(BaseCommand):
             for allocation in grant.allocations:
                 if allocation.resource in settings.SLURM_SUPPORTED_RESOURCES:
                     if allocation.name in slurm_assoc.keys():
-                        self.sync_slurm_account(grant, allocation, group_dict[grant.group],
-                                                slurm_assoc[allocation.name], user_dict.keys())
+                        self.sync_slurm_account(allocation, group_dict[grant.group], slurm_assoc[allocation.name],
+                                                user_dict.keys())
