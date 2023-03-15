@@ -207,6 +207,10 @@ RESOURCE_TYPE_TO_BILLING_GLUE = {
         {'parameter': 'hours', 'billed_resource': 'cpu'},
     'gpu':
         {'parameter': 'hours', 'billed_resource': 'gres/gpu'},
+    'gpu-a100':
+        {'parameter': 'hours', 'billed_resource': 'gres/gpu'},
+    'gpu-v100':
+        {'parameter': 'hours', 'billed_resource': 'gres/gpu'},
 }
 
 SLURM_ADMIN_USER = 'yaq'
