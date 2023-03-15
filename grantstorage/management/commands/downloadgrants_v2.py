@@ -61,24 +61,26 @@ class Command(BaseCommand):
                 if end + datetime.timedelta(days=1) >= now >= start and status == 'accepted':
                     status = 'active'
 
-                if status == 'active' and settings.MARK_EXHAUSTED_ALLOCATIONS and (resource in settings.RESOURCE_TYPE_TO_BILLING_GLUE.keys()):
-                    allocation_usage = self.ms.find_allocation_usage_by_name(name)
-                    if allocation_usage is None:
-                        continue
-                    parameter_name = settings.RESOURCE_TYPE_TO_BILLING_GLUE[resource]['parameter']
-                    billed_resource = settings.RESOURCE_TYPE_TO_BILLING_GLUE[resource]['billed_resource']
-
-                    parameter_value = allocation.parameters.get(parameter_name, 0)
-                    billed_resource_amount = allocation_usage.summary.resources.get(billed_resource, 0)
-                    if billed_resource_amount > parameter_value:
-                        status = 'exhausted'
-
                 if resource.startswith('storage'):
                     resource = 'storage'
                 parameters = self.convert_recources_to_local(resource, portal_parameters)
                 grant_name = portal_allocation['grantName']
-                allocation = Allocation(name=name, resource=resource, parameters=parameters, status=status, start=start,
-                                        end=end)
+
+                if status == 'active' and settings.MARK_EXHAUSTED_ALLOCATIONS and \
+                        (resource in settings.RESOURCE_TYPE_TO_BILLING_GLUE.keys()):
+                    allocation_usage = self.ms.find_allocation_usage_by_name(name)
+                    if allocation_usage is not None:
+                        parameter_name = settings.RESOURCE_TYPE_TO_BILLING_GLUE[resource]['parameter']
+                        billed_resource = settings.RESOURCE_TYPE_TO_BILLING_GLUE[resource]['billed_resource']
+
+                        parameter_value = parameters.get(parameter_name, 0)
+                        billed_resource_amount = allocation_usage.summary.resources.get(billed_resource, 0)
+                        if billed_resource_amount > parameter_value:
+                            status = 'exhausted'
+
+                allocation = Allocation(
+                    name=name, resource=resource, parameters=parameters, status=status, start=start, end=end
+                )
                 if grant_name not in grant_allocations.keys():
                     grant_allocations[grant_name] = [allocation]
                 else:
