@@ -67,7 +67,7 @@ class Command(BaseCommand):
                             user_allocations += [allocation]
 
             user_allocations.sort(key=lambda a: a.start)
-            user_account_dict[user] = map(lambda a: a.name, user_allocations)
+            user_account_dict[user] = list(map(lambda a: a.name, user_allocations))
 
         return user_account_dict
 
