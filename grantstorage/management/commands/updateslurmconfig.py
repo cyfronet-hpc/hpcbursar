@@ -182,7 +182,7 @@ class Command(BaseCommand):
                 if allocation.resource in settings.SLURM_SUPPORTED_RESOURCES:
                     if allocation.is_active:
                         if allocation.name not in slurm_assoc.keys():
-                            self.add_slurm_account(grant, allocation, group_dict[grant.group])
+                            self.add_slurm_account(allocation, group_dict[grant.group])
 
         print('find managed user_accounts')
         user_managed_accounts = self.find_user_managed_accounts(user_dict.keys(), group_dict, grants)
