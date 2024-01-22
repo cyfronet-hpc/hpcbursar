@@ -54,7 +54,7 @@ class UserSerializer(serializers.Serializer):
     status = serializers.CharField()
     first_name = serializers.CharField()
     last_name = serializers.CharField()
-    opi = serializers.CharField(allow_blank=True)
+    opi = serializers.CharField(allow_blank=True, allow_null=True)
     affiliations = AffiliationSerializer(many=True)
 
     def create(self, validated_data):
