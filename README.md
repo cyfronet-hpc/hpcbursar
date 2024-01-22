@@ -22,10 +22,12 @@ Slurm account management based on concept of 'grants'.
   the "python manage.py" interface, e.g.:
 
 ```
-5 * * * * root /srv/hpcbursar.venv/bin/python3.9 /srv/hpcbursar/manage.py downloadgrants
+5 * * * * root /srv/hpcbursar.venv/bin/python3.9 /srv/hpcbursar/manage.py downloadgrants_vX
 11 * * * * root /srv/hpcbursar.venv/bin/python3.9 /srv/hpcbursar/manage.py updatepartitions
 12 * * * * root /srv/hpcbursar.venv/bin/python3.9 /srv/hpcbursar/manage.py updateslurmconfig
 ```
+
+Please use the most recent version od "downloadgrants" command!
 
 # Description of the project structure
 
