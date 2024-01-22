@@ -160,7 +160,7 @@ class Command(BaseCommand):
         groups = self.ms.find_all_groups()
         # grants = list(filter(lambda grant: grant.name == 'plgplgrid', self.ms.find_all_grants()))
         grants = self.ms.find_all_grants()
-        users = list(filter(lambda user: user.status == 'ACTIVE', users))
+        users = list(filter(lambda user: user.status.lower() == 'active', users))
         user_dict = {}
         group_dict = {}
         for user in users:
