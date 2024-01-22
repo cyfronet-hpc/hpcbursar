@@ -191,6 +191,7 @@ class Command(BaseCommand):
         user_unmanaged_accounts = self.find_user_unmanaged_accounts(user_dict.keys(), grants, slurm_assoc)
 
         print('verify_default_accounts')
+        # move removing users to post 'sync_slurm_accounts'
         self.verify_default_accounts(user_dict.keys(), slurm_user_da_dict, user_managed_accounts,
                                      user_unmanaged_accounts)
 
