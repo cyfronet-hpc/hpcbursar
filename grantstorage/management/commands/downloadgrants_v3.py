@@ -115,7 +115,7 @@ class Command(BaseCommand):
                 last_name = portal_user['lastName']
                 opi = portal_user['opi']
                 affiliations = []
-                for affiliation_data in portal_user['affiliationList']:
+                for affiliation_data in portal_user['affiliations']:
                     type = affiliation_data['type']
                     units = affiliation_data['units']
                     affiliation_status = affiliation_data['status']
