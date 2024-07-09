@@ -60,6 +60,9 @@ class Command(BaseCommand):
 
                 if resource == settings.STORAGE_RESOURCE_TYPE:
                     resource = 'storage'
+                elif resource.startswith("storage-"):
+                    continue
+
                 parameters = self.convert_recources_to_local(resource, portal_parameters)
                 grant_name = portal_allocation['grantName']
 
