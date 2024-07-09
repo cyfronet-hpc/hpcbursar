@@ -141,8 +141,10 @@ GRID_KEY_LOCATION = '/home/yaq/.globus/userkey-insec.pem'
 EC_PRIVKEY_LOCATION = '/home/yaq/.globus/ecdsa-p521-private.pem'
 
 PLGRID_PORTAL_V1_URL = 'https://portal.plgrid.pl/'
-PLGRID_PORTAL_V2_URL = 'https://grants.pre.plgrid.pl/'
+PLGRID_PORTAL_V2_URL = 'https://portal.plgrid.pl/'
 PLGRID_SITE_NAMES = ['CYFRONET-ARES', 'CYFRONET-HPC-STORAGE']
+
+STORAGE_RESOURCE_TYPE = 'storage-01'
 
 PORTAL_RESOURCE_MAPPING = {
     "cpu": {

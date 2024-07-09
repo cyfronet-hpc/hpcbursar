@@ -58,7 +58,7 @@ class Command(BaseCommand):
                 if end + datetime.timedelta(days=1) >= now >= start and status == 'accepted':
                     status = 'active'
 
-                if resource.startswith('storage'):
+                if resource == settings.STORAGE_RESOURCE_TYPE:
                     resource = 'storage'
                 parameters = self.convert_recources_to_local(resource, portal_parameters)
                 grant_name = portal_allocation['grantName']
