@@ -133,6 +133,9 @@ class MongoStorage(object):
     def find_all_grants(self):
         return self.find_all_template(Grant)
 
+    def find_all_allocation_usages(self):
+        return self.find_all_template(AllocationUsage)
+
     # specific finds
     def find_groups_by_member(self, member):
         return self.find_by_filter_template(Group, {'$or': [
