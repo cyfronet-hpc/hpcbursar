@@ -71,7 +71,7 @@ class UserGrantInfoResponse(object):
         self.status = grant.status
         self.allocations = [UserGrantInfoAllocation(allocation) for allocation in grant.allocations]
         self.group = grant.group
-        self.group_members = group.members + group.leaders
+        self.group_members = group.members
         self.allocations_usages = [
             UserGrantInfoAllocationUsage(allocation_usage) for allocation_usage in allocation_usages
         ]
